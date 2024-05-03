@@ -51,6 +51,7 @@
             <option value="$PROJECT_DIR$/lib/qr" />
             <option value="$PROJECT_DIR$/lib/security" />
             <option value="$PROJECT_DIR$/lib/sqlite" />
+            <option value="$PROJECT_DIR$/stonapi" />
             <option value="$PROJECT_DIR$/ton" />
             <option value="$PROJECT_DIR$/tonapi" />
             <option value="$PROJECT_DIR$/ui" />
