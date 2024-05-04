@@ -2,6 +2,7 @@ package com.tonapps.wallet.api.entity
 
 import android.net.Uri
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
 
@@ -21,13 +22,14 @@ data class ConfigEntity(
     val tonCommunityChatUrl: String,
     val tonApiV2Key: String,
     val featuredPlayInterval: Int,
+    val flags: FlagsEntity,
     val stonHost: String,
 ) : Parcelable {
 
     val swapUri: Uri
         get() = Uri.parse(stonfiUrl)
 
-    constructor(json: JSONObject) : this(
+    constructor(json: JSONObject, debug: Boolean) : this(
         supportLink = json.getString("supportLink"),
         nftExplorer = json.getString("NFTOnExplorerUrl"),
         transactionExplorer = json.getString("transactionExplorer"),
@@ -42,6 +44,11 @@ data class ConfigEntity(
         tonCommunityChatUrl = json.getString("tonCommunityChatUrl"),
         tonApiV2Key = json.getString("tonApiV2Key"),
         featuredPlayInterval = json.optInt("featured_play_interval", 3000),
+        flags = if (debug) {
+            FlagsEntity()
+        } else {
+            FlagsEntity(json.getJSONObject("flags"))
+        }
         stonHost = "https://api.ston.fi",
     )
 
@@ -60,6 +67,7 @@ data class ConfigEntity(
         tonCommunityChatUrl = "https://t.me/toncoin_chat",
         tonApiV2Key = "",
         featuredPlayInterval = 3000,
+        flags = FlagsEntity(),
         stonHost = "https://api.ston.fi",
     )
 
