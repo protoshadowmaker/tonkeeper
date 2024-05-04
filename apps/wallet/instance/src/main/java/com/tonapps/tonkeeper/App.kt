@@ -24,6 +24,7 @@ import com.tonapps.wallet.data.collectibles.collectiblesModule
 import com.tonapps.wallet.data.core.dataModule
 import com.tonapps.wallet.data.events.eventsModule
 import com.tonapps.wallet.data.push.pushModule
+import com.tonapps.wallet.data.swap.swapModule
 import com.tonapps.wallet.data.tonconnect.tonConnectModule
 import org.koin.core.component.KoinComponent
 

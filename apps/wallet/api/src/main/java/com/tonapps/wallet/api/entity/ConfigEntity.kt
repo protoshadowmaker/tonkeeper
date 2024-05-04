@@ -48,7 +48,7 @@ data class ConfigEntity(
             FlagsEntity()
         } else {
             FlagsEntity(json.getJSONObject("flags"))
-        }
+        },
         stonHost = "https://api.ston.fi",
     )
 
