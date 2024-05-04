@@ -257,4 +257,7 @@
     <string name="search_browser">Поиск</string>
     <string name="explore">Витрина</string>
     <string name="connected">Подключённые</string>
+
+    <string name="select_token">Выберите токен</string>
+    <string name="close">Закрыть</string>
 </resources>

@@ -21,7 +21,8 @@ data class ConfigEntity(
     val tonCommunityChatUrl: String,
     val tonApiV2Key: String,
     val featuredPlayInterval: Int,
-): Parcelable {
+    val stonHost: String,
+) : Parcelable {
 
     val swapUri: Uri
         get() = Uri.parse(stonfiUrl)
@@ -40,7 +41,8 @@ data class ConfigEntity(
         tonCommunityUrl = json.getString("tonCommunityUrl"),
         tonCommunityChatUrl = json.getString("tonCommunityChatUrl"),
         tonApiV2Key = json.getString("tonApiV2Key"),
-        featuredPlayInterval = json.optInt("featured_play_interval", 3000)
+        featuredPlayInterval = json.optInt("featured_play_interval", 3000),
+        stonHost = "https://api.ston.fi",
     )
 
     constructor() : this(
@@ -57,7 +59,8 @@ data class ConfigEntity(
         tonCommunityUrl = "https://t.me/toncoin",
         tonCommunityChatUrl = "https://t.me/toncoin_chat",
         tonApiV2Key = "",
-        featuredPlayInterval = 3000
+        featuredPlayInterval = 3000,
+        stonHost = "https://api.ston.fi",
     )
 
     companion object {

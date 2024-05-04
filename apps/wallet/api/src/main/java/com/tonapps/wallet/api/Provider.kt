@@ -2,16 +2,19 @@ package com.tonapps.wallet.api
 
 import com.tonapps.wallet.api.core.BaseAPI
 import com.tonapps.wallet.api.core.SourceAPI
+import com.tonapps.wallet.api.core.StonAPI
 import okhttp3.OkHttpClient
 
 internal class Provider(
     mainnetHost: String,
     testnetHost: String,
+    stonHost: String,
     okHttpClient: OkHttpClient,
 ) {
 
     private val main = BaseAPI(mainnetHost, okHttpClient)
     private val test = BaseAPI(testnetHost, okHttpClient)
+    private val ston = StonAPI(stonHost, okHttpClient)
 
     val accounts = SourceAPI(main.accounts, test.accounts)
 
@@ -40,4 +43,6 @@ internal class Provider(
     val traces = SourceAPI(main.traces, test.traces)
 
     val wallet = SourceAPI(main.wallet, test.wallet)
+
+    val dex = SourceAPI(ston.dex, ston.dex)
 }

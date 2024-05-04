@@ -30,6 +30,7 @@ import com.tonapps.tonkeeper.ui.screen.picker.PickerViewModel
 import com.tonapps.tonkeeper.ui.screen.settings.main.SettingsViewModel
 import com.tonapps.tonkeeper.ui.screen.settings.security.SecurityViewModel
 import com.tonapps.tonkeeper.ui.screen.settings.theme.ThemeViewModel
+import com.tonapps.tonkeeper.ui.screen.swap.tokens.SwapTokensViewModel
 import com.tonapps.tonkeeper.ui.screen.wallet.WalletViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,4 +75,5 @@ val koinModel = module {
     viewModel { JettonScreenFeature(get(), get()) }
     viewModel { BrowserConnectedViewModel(get(), get()) }
     viewModel { BrowserMainViewModel() }
+    viewModel { SwapTokensViewModel(get(), get()) }
 }

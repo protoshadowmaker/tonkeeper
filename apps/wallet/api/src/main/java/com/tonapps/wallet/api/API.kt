@@ -2,11 +2,9 @@ package com.tonapps.wallet.api
 
 import android.content.Context
 import android.util.ArrayMap
-import android.util.Log
 import com.tonapps.blockchain.Coin
 import com.tonapps.blockchain.ton.extensions.base64
 import com.tonapps.blockchain.ton.extensions.isValid
-import com.tonapps.extensions.ifPunycodeToUnicode
 import com.tonapps.extensions.locale
 import com.tonapps.extensions.unicodeToPunycode
 import com.tonapps.network.SSEvent
@@ -22,6 +20,8 @@ import com.tonapps.wallet.api.entity.ConfigEntity
 import com.tonapps.wallet.api.entity.TokenEntity
 import com.tonapps.wallet.api.internal.ConfigRepository
 import com.tonapps.wallet.api.internal.InternalApi
+import fi.ston.models.AssetInfoSchema
+import fi.ston.models.GetAssetList200Response
 import io.tonapi.models.Account
 import io.tonapi.models.AccountEvent
 import io.tonapi.models.AccountEvents
@@ -64,7 +64,12 @@ class API(
         get() = configRepository.configEntity
 
     private val provider: Provider by lazy {
-        Provider(config.tonapiMainnetHost, config.tonapiTestnetHost, tonAPIHttpClient)
+        Provider(
+            mainnetHost = config.tonapiMainnetHost,
+            testnetHost = config.tonapiTestnetHost,
+            stonHost = config.stonHost,
+            okHttpClient = tonAPIHttpClient
+        )
     }
 
     fun accounts(testnet: Boolean) = provider.accounts.get(testnet)
@@ -78,6 +83,8 @@ class API(
     fun emulation(testnet: Boolean) = provider.emulation.get(testnet)
 
     fun rates() = provider.rates.get(false)
+
+    fun dex() = provider.dex.get(false)
 
     fun getEvents(
         accountId: String,
@@ -377,6 +384,10 @@ class API(
         } catch (e: Throwable) {
             null
         }
+    }
+
+    fun getAssetList(): List<AssetInfoSchema> {
+        return dex().getAssetList().assetList
     }
 
     companion object {

@@ -69,6 +69,7 @@ dependencies {
     implementation(project(Dependence.Wallet.Data.tonconnect))
     implementation(project(Dependence.Wallet.Data.push))
     implementation(project(Dependence.Wallet.Data.browser))
+    implementation(project(Dependence.Wallet.Data.swap))
 
     implementation(project(Dependence.UIKit.core))
 
@@ -96,6 +97,7 @@ dependencies {
 
     implementation(project(Dependence.Module.core))
     implementation(project(Dependence.Module.tonApi))
+    implementation(project(Dependence.Module.stonApi))
     implementation(project(Dependence.Module.blur))
 
     implementation(project(Dependence.Lib.network))

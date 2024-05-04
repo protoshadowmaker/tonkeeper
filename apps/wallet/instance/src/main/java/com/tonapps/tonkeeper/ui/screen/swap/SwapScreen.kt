@@ -20,6 +20,7 @@ class SwapScreen: BaseFragment(R.layout.fragment_swap), BaseFragment.BottomSheet
 
     private val rootViewModel: RootViewModel by activityViewModel()
 
+    //TODO remove
     private lateinit var webView: BridgeWebView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

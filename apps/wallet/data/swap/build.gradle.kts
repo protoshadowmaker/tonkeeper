@@ -2,10 +2,11 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    kotlin("plugin.serialization") version "1.9.23"
 }
 
 android {
-    namespace = Build.namespacePrefix("wallet.api")
+    namespace = Build.namespacePrefix("wallet.data.swap")
     compileSdk = Build.compileSdkVersion
 
     defaultConfig {
@@ -23,14 +24,12 @@ android {
 }
 
 dependencies {
+    implementation(Dependence.KotlinX.coroutines)
     implementation(Dependence.Koin.core)
+    implementation(Dependence.ton)
+    implementation(project(Dependence.Wallet.api))
     implementation(project(Dependence.Module.tonApi))
     implementation(project(Dependence.Module.stonApi))
-    implementation(project(Dependence.Lib.network))
-    implementation(project(Dependence.Lib.blockchain))
-    implementation(project(Dependence.Lib.extensions))
-    implementation(Dependence.Squareup.okhttp)
-    implementation(Dependence.Squareup.sse)
-    implementation(Dependence.Squareup.moshi)
-    implementation(Dependence.Squareup.moshiAdapters)
+
+    implementation(project(Dependence.Module.core))
 }

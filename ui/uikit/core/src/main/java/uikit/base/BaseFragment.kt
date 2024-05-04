@@ -132,6 +132,7 @@ open class BaseFragment(
             }
         }
         view.setOnClickListener {  }
+        Log.d("Screen", javaClass.simpleName)
         return view
     }
 
