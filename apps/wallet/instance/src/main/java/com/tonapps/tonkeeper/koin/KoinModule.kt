@@ -83,7 +83,7 @@ val koinModel = module {
     viewModel { BrowserSearchViewModel(get(), get(), get(), get()) }
     viewModel { DAppViewModel(get(), get()) }
     viewModel { SwapSearchViewModel(get(), get()) }
-    viewModel { SwapAmountViewModel(get()) }
+    viewModel { SwapAmountViewModel(get(), get()) }
 
     viewModel { ConfirmScreenFeature(get(), get(), get(), get()) }
     viewModel { ChartScreenFeature(get(), get(), get()) }

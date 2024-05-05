@@ -212,6 +212,7 @@
     <string name="logout_confirmation">У меня есть резервная копия фразы восстановления.</string>
     <string name="back_up_now">Скопировать сейчас</string>
     <string name="max">Максимум</string>
+    <string name="max_upper">МАКСИМУМ</string>
     <string name="confirm_and_send">Подтвердить и отправить</string>
     <string name="confirm_action">Подтвердить действие</string>
     <string name="ton_connect_title">Войти в %1$s</string>
@@ -265,6 +266,10 @@
     <string name="browser_search_placeholder">Введите адрес или начните поиск</string>
 
     <string name="swap_token">Обменять</string>
-    <string name="select_token">Выберите токен</string>
+    <string name="choose_token">Выберите токен</string>
+    <string name="choose_token_capital">Выберите Токен</string>
     <string name="close">Закрыть</string>
+    <string name="balance">Баланс: %1$s</string>
+    <string name="choose_upper">ВЫБРАТЬ</string>
+    <string name="enter_amount">Введите Количество</string>
 </resources>

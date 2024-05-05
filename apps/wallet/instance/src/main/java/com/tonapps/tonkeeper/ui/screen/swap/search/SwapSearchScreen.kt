@@ -1,7 +1,6 @@
 package com.tonapps.tonkeeper.ui.screen.swap.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import com.tonapps.tonkeeper.ui.screen.swap.search.list.Adapter
@@ -19,7 +18,7 @@ import uikit.widget.SimpleRecyclerView
 class SwapSearchScreen : BaseFragment(R.layout.fragment_swap_search), BaseFragment.BottomSheet {
 
     private val request: String by lazy { arguments?.getString(REQUEST_KEY) ?: "" }
-    private val swapSearchViewModel: SwapSearchViewModel by viewModel()
+    private val viewModel: SwapSearchViewModel by viewModel()
 
     private val adapter = Adapter {
         navigation?.setFragmentResult(request, Bundle().apply {
@@ -52,10 +51,9 @@ class SwapSearchScreen : BaseFragment(R.layout.fragment_swap_search), BaseFragme
         closeButton.setOnClickListener {
             finish()
         }
-        searchInput.doOnTextChanged = { swapSearchViewModel.search(it.toString()) }
+        searchInput.doOnTextChanged = { viewModel.search(it.toString()) }
 
-        collectFlow(swapSearchViewModel.uiItemsFlow) { items ->
-            Log.d("SWAP_LIST", "Received ${items.size}")
+        collectFlow(viewModel.uiItemsFlow) { items ->
             adapter.submitList(items) {
                 listView.scrollToPosition(0)
             }

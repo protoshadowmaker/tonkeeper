@@ -227,6 +227,7 @@
     <string name="logout_confirmation">I have a backup copy of recovery phrase</string>
     <string name="back_up_now">Back up now</string>
     <string name="max">Max</string>
+    <string name="max_upper">MAX</string>
     <string name="confirm_and_send">Confirm and send</string>
     <string name="confirm_action">Confirm action</string>
     <string name="ton_connect_title">Connect to %1$s</string>
@@ -269,6 +270,10 @@
     <string name="browser_search_placeholder">Enter an address or search the web</string>
 
     <string name="swap_token">Swap</string>
-    <string name="select_token">Choose token</string>
+    <string name="choose_token">Choose token</string>
+    <string name="choose_token_capital">Choose Token</string>
     <string name="close">Close</string>
+    <string name="balance">Balance: %1$s</string>
+    <string name="choose_upper">CHOOSE</string>
+    <string name="enter_amount">Enter Amount</string>
 </resources>

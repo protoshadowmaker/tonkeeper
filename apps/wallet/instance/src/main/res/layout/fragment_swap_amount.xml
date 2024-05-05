@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swapTokensRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -17,17 +18,215 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/srcInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/offsetMedium"
+        android:background="@drawable/bg_content"
+        android:paddingHorizontal="@dimen/offsetMedium"
+        android:paddingBottom="@dimen/offsetMedium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/captionSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/offsetMedium"
+            android:paddingBottom="@dimen/offsetSmall"
+            android:text="@string/send"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="?attr/textSecondaryColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/amountMax"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/offsetSmall"
+            android:paddingTop="@dimen/offsetMedium"
+            android:paddingEnd="0dp"
+            android:paddingBottom="@dimen/offsetSmall"
+            android:text="@string/max_upper"
+            android:textAppearance="@style/TextAppearance.Label2"
+            android:textColor="?attr/accentBlueColor"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/srcBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/offsetMedium"
+            android:paddingBottom="@dimen/offsetSmall"
+            android:text="@string/balance"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="?attr/textSecondaryColor"
+            app:layout_constraintEnd_toStartOf="@id/amountMax"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/srcHeaderBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:barrierMargin="@dimen/offsetSmall"
+            app:constraint_referenced_ids="captionSend,amountMax,srcBalance" />
+
+        <com.tonapps.tonkeeper.fragment.send.view.AmountInput
+            android:id="@+id/srcValue"
+            android:layout_width="0dp"
+            android:layout_height="48.76dp"
+            android:layout_marginStart="@dimen/offsetSmall"
+            android:background="@null"
+            android:digits="0123456789.,"
+            android:fontFamily="@font/montserrat_semi_bold"
+            android:gravity="center_vertical|end"
+            android:hint="0"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:text="0"
+            android:textColor="?attr/textPrimaryColor"
+            android:textCursorDrawable="@drawable/cursor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/srcToken"
+            app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier" />
+
+        <uikit.widget.RowLayout
+            android:id="@+id/srcTokenContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_tertiary"
+            android:padding="@dimen/offsetExtraSmall"
+            app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier">
+
+            <uikit.widget.FrescoView
+                android:id="@+id/srcTokenIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_oval"
+                android:backgroundTint="?attr/backgroundContentTintColor"
+                app:roundAsCircle="true" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/srcToken"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingHorizontal="6dp"
+                android:textAppearance="@style/TextAppearance.Label1"
+                android:textColor="?attr/buttonTertiaryForegroundColor"
+
+                tools:text="TON" />
+        </uikit.widget.RowLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dstInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/offsetMedium"
+        android:layout_marginTop="@dimen/offsetMedium"
+        android:background="@drawable/bg_content"
+        android:paddingHorizontal="@dimen/offsetMedium"
+        android:paddingBottom="@dimen/offsetMedium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/srcInput">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/captionReceive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/offsetMedium"
+            android:paddingBottom="@dimen/offsetSmall"
+            android:text="@string/receive"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="?attr/textSecondaryColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dstBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/offsetMedium"
+            android:paddingBottom="@dimen/offsetSmall"
+            android:text="@string/balance"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="?attr/textSecondaryColor"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/dstHeaderBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:barrierMargin="@dimen/offsetSmall"
+            app:constraint_referenced_ids="captionReceive,dstBalance" />
+
+        <com.tonapps.tonkeeper.fragment.send.view.AmountInput
+            android:id="@+id/dstValue"
+            android:layout_width="0dp"
+            android:layout_height="48.76dp"
+            android:layout_marginStart="@dimen/offsetSmall"
+            android:background="@null"
+            android:digits="0123456789.,"
+            android:enabled="false"
+            android:fontFamily="@font/montserrat_semi_bold"
+            android:gravity="center_vertical|end"
+            android:hint="0"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:textColor="@color/edit_text_selector"
+            android:textCursorDrawable="@drawable/cursor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/dstToken"
+            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dstToken"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_button_tertiary"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/offsetMedium"
+            android:text="@string/choose_upper"
+            android:textAppearance="@style/TextAppearance.Label1"
+            android:textColor="?attr/buttonTertiaryForegroundColor"
+            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <Button
-        android:id="@+id/source"
+        android:id="@+id/action"
         style="@style/Widget.App.Button.Secondary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/offsetMedium"
+        android:layout_marginTop="@dimen/offsetLarge"
         android:layout_marginBottom="@dimen/offsetMedium"
-        android:text="@string/close"
+        android:text="@string/choose_token_capital"
         android:textAppearance="@style/TextAppearance.Label1"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dstInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
