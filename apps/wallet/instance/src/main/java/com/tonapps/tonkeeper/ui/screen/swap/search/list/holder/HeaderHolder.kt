@@ -1,7 +1,7 @@
-package com.tonapps.tonkeeper.ui.screen.swap.tokens.list.holder
+package com.tonapps.tonkeeper.ui.screen.swap.search.list.holder
 
 import android.view.ViewGroup
-import com.tonapps.tonkeeper.ui.screen.swap.tokens.list.Item
+import com.tonapps.tonkeeper.ui.screen.swap.search.list.Item
 import com.tonapps.tonkeeperx.R
 import uikit.extensions.setPaddingVertical
 import uikit.widget.TitleView

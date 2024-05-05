@@ -2,7 +2,7 @@ package uikit.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
@@ -11,11 +11,14 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import uikit.R
 import uikit.drawable.BarDrawable
 import uikit.drawable.HeaderDrawable
 import uikit.extensions.getDimensionPixelSize
+import uikit.extensions.gone
 import uikit.extensions.setPaddingHorizontal
+import uikit.extensions.setPaddingStart
 import uikit.extensions.setPaddingTop
 import uikit.extensions.useAttributes
 import uikit.extensions.withAnimation
@@ -188,6 +191,14 @@ open class HeaderView @JvmOverloads constructor(
         withAnimation(duration = ANIMATION_DURATION) {
             textView.alpha = 1f
         }
+    }
+
+    fun startGravity() {
+        titleView.updateLayoutParams<LayoutParams> {
+            gravity = Gravity.START
+        }
+        textView.setPaddingStart(0)
+        closeView.gone()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

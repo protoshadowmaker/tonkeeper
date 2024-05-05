@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="uikit.widget.RowLayout">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/header_close"
@@ -10,7 +12,9 @@
         android:backgroundTint="?attr/buttonSecondaryBackgroundColor"
         android:background="@drawable/bg_oval_button_secondary"
         android:scaleType="centerInside"
-        android:alpha="0"/>
+        android:alpha="0"
+        tools:alpha="100"
+        tools:src="@drawable/ic_close_16" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/header_text"
@@ -28,8 +32,9 @@
             android:singleLine="true"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.H3"
-            android:textColor="?attr/textPrimaryColor"/>
-        
+            android:textColor="?attr/textPrimaryColor"
+            tools:text="Title" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/subtitle_container"
             android:visibility="gone"
@@ -38,7 +43,7 @@
             android:paddingHorizontal="@dimen/offsetMedium"
             android:layout_gravity="center"
             android:orientation="horizontal">
-            
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/header_subtitle"
                 android:layout_width="wrap_content"
@@ -49,14 +54,14 @@
                 android:textColor="?attr/textSecondaryColor"
                 android:textSize="14sp"
                 android:fontFamily="@font/montserrat_medium"/>
-            
+
             <uikit.widget.LoaderView
                 android:id="@+id/header_loader"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_marginStart="@dimen/offsetExtraSmall"
                 android:layout_gravity="center"/>
-            
+
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -69,6 +74,8 @@
         android:tint="?attr/buttonSecondaryForegroundColor"
         android:backgroundTint="?attr/buttonSecondaryBackgroundColor"
         android:background="@drawable/bg_oval_button_secondary"
-        android:alpha="0"/>
+        android:alpha="0"
+        tools:alpha="100"
+        tools:src="@drawable/ic_gear_16" />
 
 </merge>

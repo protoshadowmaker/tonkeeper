@@ -1,4 +1,4 @@
-package com.tonapps.tonkeeper.ui.screen.swap.tokens.list
+package com.tonapps.tonkeeper.ui.screen.swap.search.list
 
 import android.net.Uri
 import com.tonapps.uikit.list.BaseListItem
@@ -14,7 +14,7 @@ sealed class Item(type: Int) : BaseListItem(type) {
 
     data class Header(val title: String) : Item(TYPE_HEADER)
 
-    data object TokenSkeleton : Item(TYPE_TOKEN_SKELETON)
+    data class TokenSkeleton(val position: ListCell.Position) : Item(TYPE_TOKEN_SKELETON)
 
     data class Token(
         val position: ListCell.Position,

@@ -264,6 +264,7 @@
     <string name="connected">Подключённые</string>
     <string name="browser_search_placeholder">Введите адрес или начните поиск</string>
 
+    <string name="swap_token">Обменять</string>
     <string name="select_token">Выберите токен</string>
     <string name="close">Закрыть</string>
 </resources>

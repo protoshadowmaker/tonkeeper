@@ -7,7 +7,7 @@ import com.tonapps.tonkeeper.extensions.openCamera
 import com.tonapps.tonkeeper.extensions.sendCoin
 import com.tonapps.tonkeeper.ui.screen.qr.QRScreen
 import com.tonapps.tonkeeper.ui.screen.swap.SwapScreen
-import com.tonapps.tonkeeper.ui.screen.swap.tokens.SwapTokensScreen
+import com.tonapps.tonkeeper.ui.screen.swap.amount.SwapAmountScreen
 import com.tonapps.tonkeeper.ui.screen.wallet.list.Item
 import com.tonapps.tonkeeperx.R
 import com.tonapps.wallet.api.entity.TokenEntity
@@ -38,7 +38,7 @@ class ActionsHolder(parent: ViewGroup): Holder<Item.Actions>(parent, R.layout.vi
             navigation?.add(SwapScreen.newInstance(item.swapUri, item.address, TokenEntity.TON.address))
         }
         stakeView.setOnClickListener {
-            navigation?.add(SwapTokensScreen.newInstance())
+            navigation?.add(SwapAmountScreen.newInstance())
         }
 
         //TODO rollback changes

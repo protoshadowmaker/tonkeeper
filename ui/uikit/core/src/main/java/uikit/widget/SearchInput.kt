@@ -10,6 +10,7 @@ import androidx.core.widget.doOnTextChanged
 import uikit.R
 import uikit.extensions.dp
 import uikit.extensions.focusWithKeyboard
+import uikit.extensions.gone
 import uikit.extensions.hideKeyboard
 import uikit.extensions.useAttributes
 
@@ -48,6 +49,10 @@ class SearchInput @JvmOverloads constructor(
         context.useAttributes(attrs, R.styleable.SearchInput) {
             fieldView.hint = it.getString(R.styleable.SearchInput_android_hint)
             actionView.text = it.getString(R.styleable.SearchInput_android_button)
+        }
+
+        if (actionView.text.isBlank()) {
+            actionView.gone()
         }
     }
 

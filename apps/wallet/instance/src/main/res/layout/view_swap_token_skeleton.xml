@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<uikit.widget.ColumnLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<uikit.widget.SkeletonLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shimmer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="76dp">
 
     <View
+        android:id="@+id/stub"
         android:layout_width="match_parent"
         android:layout_height="76dp"
-        android:layout_marginHorizontal="@dimen/offsetMedium"
-        android:layout_marginTop="@dimen/offsetMedium"
         android:background="@drawable/bg_content" />
-
-</uikit.widget.ColumnLayout>
+</uikit.widget.SkeletonLayout>
