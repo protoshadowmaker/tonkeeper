@@ -3,14 +3,16 @@ package com.tonapps.tonkeeper.ui.screen.swap.amount
 import android.net.Uri
 
 data class SwapAmountScreenState(
-    val srcTokenName: String,
-    val srcTokenIconUri: Uri,
-    val srcBalanceFormat: CharSequence? = null,
-    val srcAmountFormat: CharSequence,
-    val updateSrcAmount: Boolean = false,
-    val dstTokenName: String,
-    val dstTokenIconUri: Uri? = null,
-    val dstBalanceFormat: CharSequence? = null,
-    val dstAmountFormat: CharSequence? = null,
-    val updateDstAmount: Boolean = false,
+    val srcTokenState: TokenState,
+    val dstTokenState: TokenState,
+)
+
+data class TokenState(
+    val selected: Boolean,
+    val displayName: String,
+    val symbol: String? = null,
+    val iconUri: Uri? = null,
+    val balanceFormat: CharSequence? = null,
+    val amountFormat: CharSequence? = null,
+    val updateAmount: Boolean = false,
 )

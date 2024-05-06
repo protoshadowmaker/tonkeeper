@@ -4,6 +4,8 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import com.tonapps.tonkeeper.ui.screen.swap.search.list.Item
 import com.tonapps.tonkeeperx.R
+import com.tonapps.uikit.color.backgroundContentColor
+import com.tonapps.uikit.color.buttonTertiaryBackgroundColor
 import com.tonapps.uikit.color.textPrimaryColor
 import com.tonapps.uikit.color.textSecondaryColor
 import com.tonapps.wallet.data.core.HIDDEN_BALANCE
@@ -29,7 +31,13 @@ class TokenHolder(
     private val balanceFiatView = findViewById<AppCompatTextView>(R.id.balance_currency)
 
     override fun onBind(item: Item.Token) {
-        itemView.background = item.position.drawable(context)
+        val bgColor = if (item.selected) {
+            context.buttonTertiaryBackgroundColor
+        } else {
+            context.backgroundContentColor
+        }
+        //TODO performance issue? To often call new drawable
+        itemView.background = item.position.drawable(context, bgColor)
         itemView.setOnClickListener {
             onClickListener(item.symbol)
         }

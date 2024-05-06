@@ -35,7 +35,7 @@ import com.tonapps.tonkeeper.ui.screen.settings.main.SettingsViewModel
 import com.tonapps.tonkeeper.ui.screen.settings.security.SecurityViewModel
 import com.tonapps.tonkeeper.ui.screen.settings.theme.ThemeViewModel
 import com.tonapps.tonkeeper.ui.screen.swap.amount.SwapAmountViewModel
-import com.tonapps.tonkeeper.ui.screen.swap.search.SwapSearchViewModel
+import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenViewModel
 import com.tonapps.tonkeeper.ui.screen.wallet.WalletViewModel
 import com.tonapps.tonkeeper.ui.screen.wallet.list.WalletAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -82,7 +82,7 @@ val koinModel = module {
     viewModel { BrowserMainViewModel(get()) }
     viewModel { BrowserSearchViewModel(get(), get(), get(), get()) }
     viewModel { DAppViewModel(get(), get()) }
-    viewModel { SwapSearchViewModel(get(), get()) }
+    viewModel { SearchSwapTokenViewModel(get(), get()) }
     viewModel { SwapAmountViewModel(get(), get()) }
 
     viewModel { ConfirmScreenFeature(get(), get(), get(), get()) }

@@ -15,10 +15,14 @@ import uikit.widget.HeaderView
 import uikit.widget.SearchInput
 import uikit.widget.SimpleRecyclerView
 
-class SwapSearchScreen : BaseFragment(R.layout.fragment_swap_search), BaseFragment.BottomSheet {
+class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
+    BaseFragment.BottomSheet {
 
     private val request: String by lazy { arguments?.getString(REQUEST_KEY) ?: "" }
-    private val viewModel: SwapSearchViewModel by viewModel()
+    private val selectedSymbol: String by lazy { arguments?.getString(SELECTED_SYMBOL) ?: "" }
+    private val excludedSymbol: String by lazy { arguments?.getString(EXCLUDED_SYMBOL) ?: "" }
+
+    private val viewModel: SearchSwapTokenViewModel by viewModel()
 
     private val adapter = Adapter {
         navigation?.setFragmentResult(request, Bundle().apply {
@@ -53,11 +57,14 @@ class SwapSearchScreen : BaseFragment(R.layout.fragment_swap_search), BaseFragme
         }
         searchInput.doOnTextChanged = { viewModel.search(it.toString()) }
 
+        viewModel.selectedSymbol = selectedSymbol
+        viewModel.excludedSymbol = excludedSymbol
         collectFlow(viewModel.uiItemsFlow) { items ->
             adapter.submitList(items) {
                 listView.scrollToPosition(0)
             }
         }
+        viewModel.loadData()
     }
 
     override fun onDragging() {
@@ -68,11 +75,19 @@ class SwapSearchScreen : BaseFragment(R.layout.fragment_swap_search), BaseFragme
     companion object {
 
         private const val REQUEST_KEY = "request"
+        private const val SELECTED_SYMBOL = "selected_symbol"
+        private const val EXCLUDED_SYMBOL = "excluded_symbol"
 
-        fun newInstance(request: String): SwapSearchScreen {
-            return SwapSearchScreen().apply {
+        fun newInstance(
+            request: String,
+            selectedSymbol: String? = null,
+            excludedSymbol: String? = null
+        ): SearchSwapTokenScreen {
+            return SearchSwapTokenScreen().apply {
                 arguments = Bundle().apply {
                     putString(REQUEST_KEY, request)
+                    putString(SELECTED_SYMBOL, selectedSymbol)
+                    putString(EXCLUDED_SYMBOL, excludedSymbol)
                 }
             }
         }

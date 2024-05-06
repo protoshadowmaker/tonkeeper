@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SwapSearchViewModel(
+class SearchSwapTokenViewModel(
     private val settings: SettingsRepository,
     private val swapRepository: SwapRepository
 ) : ViewModel() {
@@ -31,7 +31,10 @@ class SwapSearchViewModel(
     )
     val uiItemsFlow = _uiItemsFlow.asStateFlow()
 
-    init {
+    var selectedSymbol: String = ""
+    var excludedSymbol: String = ""
+
+    fun loadData() {
         viewModelScope.launch {
             getRemoteSwapTokens()?.let {
                 allTokensUi = convertToUi(it)
@@ -74,24 +77,29 @@ class SwapSearchViewModel(
     private suspend fun convertToUi(tokens: List<SwapTokenEntity>): List<Item.Token> =
         withContext(Dispatchers.Default) {
             val hiddenBalance = settings.hiddenBalances
-            tokens.mapIndexed { index, swapTokenEntity ->
-                swapTokenEntity.toUi(
-                    testnet = false,
-                    hiddenBalance = hiddenBalance,
-                    index = index,
-                    size = tokens.size
-                )
-            }
+            tokens
+                .filter { it.symbol != excludedSymbol }
+                .mapIndexed { index, swapTokenEntity ->
+                    swapTokenEntity.toUi(
+                        testnet = false,
+                        hiddenBalance = hiddenBalance,
+                        index = index,
+                        size = tokens.size,
+                        selected = swapTokenEntity.symbol == selectedSymbol
+                    )
+                }
         }
 
     private fun SwapTokenEntity.toUi(
         testnet: Boolean,
         hiddenBalance: Boolean,
         index: Int,
-        size: Int
+        size: Int,
+        selected: Boolean,
     ): Item.Token {
         return Item.Token(
             position = ListCell.getPosition(size, index),
+            selected = selected,
             iconUri = iconUri,
             contractAddress = contractAddress,
             symbol = symbol,

@@ -96,7 +96,7 @@
             android:textCursorDrawable="@drawable/cursor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/srcToken"
+            app:layout_constraintStart_toEndOf="@+id/srcTokenContainer"
             app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier" />
 
         <uikit.widget.RowLayout
@@ -113,7 +113,7 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_oval"
-                android:backgroundTint="?attr/backgroundContentTintColor"
+                android:backgroundTint="?attr/backgroundHighlightedColor"
                 app:roundAsCircle="true" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -196,22 +196,42 @@
             android:textCursorDrawable="@drawable/cursor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dstToken"
+            app:layout_constraintStart_toEndOf="@+id/dstTokenContainer"
             app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/dstToken"
+        <uikit.widget.RowLayout
+            android:id="@+id/dstTokenContainer"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
+            android:layout_height="36dp"
             android:background="@drawable/bg_button_tertiary"
-            android:drawablePadding="6dp"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/offsetMedium"
-            android:text="@string/choose_upper"
-            android:textAppearance="@style/TextAppearance.Label1"
-            android:textColor="?attr/buttonTertiaryForegroundColor"
-            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
+            android:padding="@dimen/offsetExtraSmall"
+            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier">
+
+            <uikit.widget.FrescoView
+                android:id="@+id/dstTokenIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_oval"
+                android:backgroundTint="?attr/backgroundHighlightedColor"
+                android:visibility="gone"
+                app:roundAsCircle="true"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/dstToken"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_button_tertiary"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:paddingHorizontal="6dp"
+                android:text="@string/choose_upper"
+                android:textAppearance="@style/TextAppearance.Label1"
+                android:textColor="?attr/buttonTertiaryForegroundColor"
+                app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
+        </uikit.widget.RowLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

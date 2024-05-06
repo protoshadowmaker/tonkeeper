@@ -18,6 +18,7 @@ sealed class Item(type: Int) : BaseListItem(type) {
 
     data class Token(
         val position: ListCell.Position,
+        val selected: Boolean,
         val iconUri: Uri,
         val contractAddress: String,
         val symbol: String,
