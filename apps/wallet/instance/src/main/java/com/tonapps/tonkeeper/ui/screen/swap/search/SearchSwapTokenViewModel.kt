@@ -31,8 +31,8 @@ class SearchSwapTokenViewModel(
     )
     val uiItemsFlow = _uiItemsFlow.asStateFlow()
 
-    var selectedSymbol: String = ""
-    var excludedSymbol: String = ""
+    var selectedAddress: String = ""
+    var excludedAddress: String = ""
 
     fun loadData() {
         viewModelScope.launch {
@@ -78,14 +78,14 @@ class SearchSwapTokenViewModel(
         withContext(Dispatchers.Default) {
             val hiddenBalance = settings.hiddenBalances
             tokens
-                .filter { it.symbol != excludedSymbol }
+                .filter { it.contractAddress != excludedAddress }
                 .mapIndexed { index, swapTokenEntity ->
                     swapTokenEntity.toUi(
                         testnet = false,
                         hiddenBalance = hiddenBalance,
                         index = index,
                         size = tokens.size,
-                        selected = swapTokenEntity.symbol == selectedSymbol
+                        selected = swapTokenEntity.contractAddress == selectedAddress
                     )
                 }
         }

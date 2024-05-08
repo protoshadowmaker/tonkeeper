@@ -105,7 +105,9 @@
             android:layout_height="36dp"
             android:background="@drawable/bg_button_tertiary"
             android:padding="@dimen/offsetExtraSmall"
-            app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier">
+            app:layout_constraintBottom_toBottomOf="@id/srcValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/srcValue">
 
             <uikit.widget.FrescoView
                 android:id="@+id/srcTokenIcon"
@@ -205,7 +207,9 @@
             android:layout_height="36dp"
             android:background="@drawable/bg_button_tertiary"
             android:padding="@dimen/offsetExtraSmall"
-            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier">
+            app:layout_constraintBottom_toBottomOf="@id/dstValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/dstValue">
 
             <uikit.widget.FrescoView
                 android:id="@+id/dstTokenIcon"
@@ -233,6 +237,33 @@
                 app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
         </uikit.widget.RowLayout>
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/dstValueBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:barrierMargin="@dimen/offsetMedium"
+            app:constraint_referenced_ids="dstValue,dstTokenContainer" />
+
+        <uikit.widget.ColumnLayout
+            android:id="@+id/swapInfoContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dstValueBarrier">
+
+            <com.tonapps.tonkeeper.view.TransactionDetailView
+                android:id="@+id/rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.tonapps.tonkeeper.view.TransactionDetailView
+                android:id="@+id/priceImpact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </uikit.widget.ColumnLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
@@ -243,7 +274,7 @@
         android:layout_marginHorizontal="@dimen/offsetMedium"
         android:layout_marginTop="@dimen/offsetLarge"
         android:layout_marginBottom="@dimen/offsetMedium"
-        android:text="@string/choose_token_capital"
+        android:text="@string/enter_amount"
         android:textAppearance="@style/TextAppearance.Label1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

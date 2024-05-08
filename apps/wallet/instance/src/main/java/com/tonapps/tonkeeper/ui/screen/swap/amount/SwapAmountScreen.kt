@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.widget.doOnTextChanged
+import com.tonapps.blockchain.Coin
 import com.tonapps.tonkeeper.fragment.send.view.AmountInput
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenScreen
 import com.tonapps.tonkeeper.ui.screen.swap.settings.SwapSettingsScreen
@@ -39,8 +41,15 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navigation?.setFragmentResultListener(SRC_TOKEN_REQUEST_KEY) { bundle ->
+            bundle.getString(SRC_TOKEN_REQUEST_KEY)?.let { symbol ->
+                viewModel.onSourceChanged(symbol)
+            }
+
         }
         navigation?.setFragmentResultListener(DST_TOKEN_REQUEST_KEY) { bundle ->
+            bundle.getString(DST_TOKEN_REQUEST_KEY)?.let { symbol ->
+                viewModel.onDestinationChanged(symbol)
+            }
         }
     }
 
@@ -52,6 +61,12 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         headerView.doOnCloseClick = {
             navigation?.add(SwapSettingsScreen.newInstance())
         }
+        srcValueInput.doOnTextChanged { _, _, _, _ ->
+            viewModel.onSourceValueChanged(srcValueInput.getValue())
+        }
+        dstValueInput.doOnTextChanged { _, _, _, _ ->
+            viewModel.onDestinationValueChanged(srcValueInput.getValue())
+        }
 
         collectFlow(viewModel.uiStateFlow) { state ->
             onStateChanged(state)
@@ -59,7 +74,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     }
 
     private fun onStateChanged(state: SwapAmountScreenState) {
-        srcTokenTextView.text = state.srcTokenState.displayName
+        srcTokenTextView.text = state.srcTokenState.symbol
         if (state.srcTokenState.selected) {
             srcTokenIcon.setImageURI(state.srcTokenState.iconUri)
             srcTokenIcon.visible()
@@ -79,7 +94,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             srcValueInput.setText(state.srcTokenState.amountFormat)
         }
 
-        dstTokenTextView.text = state.dstTokenState.displayName
+        dstTokenTextView.text = state.dstTokenState.symbol
         if (state.dstTokenState.selected) {
             dstTokenIcon.setImageURI(state.dstTokenState.iconUri)
             dstTokenIcon.visible()
@@ -101,7 +116,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             navigation?.add(
                 SearchSwapTokenScreen.newInstance(
                     request = SRC_TOKEN_REQUEST_KEY,
-                    selectedSymbol = state.srcTokenState.symbol
+                    selectedAddress = state.srcTokenState.address
                 )
             )
         }
@@ -109,15 +124,16 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             navigation?.add(
                 SearchSwapTokenScreen.newInstance(
                     DST_TOKEN_REQUEST_KEY,
-                    selectedSymbol = state.dstTokenState.symbol,
-                    excludedSymbol = state.srcTokenState.symbol
+                    selectedAddress = state.dstTokenState.address,
+                    excludedAddress = state.srcTokenState.address
                 )
             )
         }
     }
 
-    private fun selectToken() {
-
+    private fun AmountInput.getValue(): Float {
+        val text = Coin.prepareValue(text.toString())
+        return text.toFloatOrNull() ?: 0f
     }
 
     companion object {

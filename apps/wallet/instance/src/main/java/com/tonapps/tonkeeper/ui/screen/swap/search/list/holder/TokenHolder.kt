@@ -9,6 +9,8 @@ import com.tonapps.uikit.color.buttonTertiaryBackgroundColor
 import com.tonapps.uikit.color.textPrimaryColor
 import com.tonapps.uikit.color.textSecondaryColor
 import com.tonapps.wallet.data.core.HIDDEN_BALANCE
+import uikit.drawable.DrawableCache
+import uikit.extensions.cacheKey
 import uikit.extensions.drawable
 import uikit.extensions.gone
 import uikit.extensions.invisible
@@ -17,9 +19,9 @@ import uikit.widget.FrescoView
 
 class TokenHolder(
     parent: ViewGroup,
-    private val onClickListener: (symbol: String) -> Unit
-) :
-    Holder<Item.Token>(parent, R.layout.view_cell_jetton) {
+    private val bgCache: DrawableCache = DrawableCache(),
+    private val onClickListener: (contractAddress: String) -> Unit
+) : Holder<Item.Token>(parent, R.layout.view_cell_jetton) {
 
     private val amountZeroColor = context.textSecondaryColor
     private val amountPositiveColor = context.textPrimaryColor
@@ -36,10 +38,11 @@ class TokenHolder(
         } else {
             context.backgroundContentColor
         }
-        //TODO performance issue? To often call new drawable
-        itemView.background = item.position.drawable(context, bgColor)
+        itemView.background = bgCache.getOrCreate(item.position.cacheKey(bgColor)) {
+            item.position.drawable(context, bgColor)
+        }
         itemView.setOnClickListener {
-            onClickListener(item.symbol)
+            onClickListener(item.contractAddress)
         }
         iconView.setImageURI(item.iconUri, this)
         titleView.text = item.symbol

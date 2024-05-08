@@ -12,3 +12,9 @@ fun ListCell.Position.drawable(
 ): Drawable {
     return CellBackgroundDrawable.create(context, this, backgroundColor)
 }
+
+fun ListCell.Position.cacheKey(
+    backgroundColor: Int
+): String {
+    return "${backgroundColor}_${this.value}"
+}

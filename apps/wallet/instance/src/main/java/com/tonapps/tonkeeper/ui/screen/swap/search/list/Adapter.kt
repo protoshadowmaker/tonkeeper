@@ -8,10 +8,13 @@ import com.tonapps.tonkeeper.ui.screen.swap.search.list.holder.TokenSkeletonHold
 import com.tonapps.uikit.list.BaseListAdapter
 import com.tonapps.uikit.list.BaseListHolder
 import com.tonapps.uikit.list.BaseListItem
+import uikit.drawable.DrawableCache
 
 class Adapter(
-    private val onClickToken: (symbol: String) -> Unit,
+    private val onClickToken: (contractAddress: String) -> Unit,
 ) : BaseListAdapter() {
+
+    private val itemsBgCache: DrawableCache = DrawableCache()
 
     init {
         submitList(emptyList())
@@ -24,7 +27,7 @@ class Adapter(
         return when (viewType) {
             Item.TYPE_HEADER -> HeaderHolder(parent)
             Item.TYPE_SUGGESTED_LIST -> TODO()
-            Item.TYPE_TOKEN -> TokenHolder(parent, onClickToken)
+            Item.TYPE_TOKEN -> TokenHolder(parent, itemsBgCache, onClickToken)
             Item.TYPE_TOKEN_SKELETON -> TokenSkeletonHolder(parent)
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }

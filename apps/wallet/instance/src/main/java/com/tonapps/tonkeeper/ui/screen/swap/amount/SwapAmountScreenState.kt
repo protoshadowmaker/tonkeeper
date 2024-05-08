@@ -9,10 +9,12 @@ data class SwapAmountScreenState(
 
 data class TokenState(
     val selected: Boolean,
-    val displayName: String,
+    val displayName: String? = null,
     val symbol: String? = null,
+    val address: String? = null,
     val iconUri: Uri? = null,
     val balanceFormat: CharSequence? = null,
-    val amountFormat: CharSequence? = null,
+    val amount: Float = 0f,
+    val amountFormat: CharSequence = "0",
     val updateAmount: Boolean = false,
 )

@@ -19,14 +19,14 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
     BaseFragment.BottomSheet {
 
     private val request: String by lazy { arguments?.getString(REQUEST_KEY) ?: "" }
-    private val selectedSymbol: String by lazy { arguments?.getString(SELECTED_SYMBOL) ?: "" }
-    private val excludedSymbol: String by lazy { arguments?.getString(EXCLUDED_SYMBOL) ?: "" }
+    private val selectedAddress: String by lazy { arguments?.getString(SELECTED_ADDRESS) ?: "" }
+    private val excludedAddress: String by lazy { arguments?.getString(EXCLUDED_ADDRESS) ?: "" }
 
     private val viewModel: SearchSwapTokenViewModel by viewModel()
 
-    private val adapter = Adapter {
+    private val adapter = Adapter { contractAddress ->
         navigation?.setFragmentResult(request, Bundle().apply {
-            putString(request, it)
+            putString(request, contractAddress)
         })
         finish()
     }
@@ -57,8 +57,8 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
         }
         searchInput.doOnTextChanged = { viewModel.search(it.toString()) }
 
-        viewModel.selectedSymbol = selectedSymbol
-        viewModel.excludedSymbol = excludedSymbol
+        viewModel.selectedAddress = selectedAddress
+        viewModel.excludedAddress = excludedAddress
         collectFlow(viewModel.uiItemsFlow) { items ->
             adapter.submitList(items) {
                 listView.scrollToPosition(0)
@@ -75,19 +75,19 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
     companion object {
 
         private const val REQUEST_KEY = "request"
-        private const val SELECTED_SYMBOL = "selected_symbol"
-        private const val EXCLUDED_SYMBOL = "excluded_symbol"
+        private const val SELECTED_ADDRESS = "selected_address"
+        private const val EXCLUDED_ADDRESS = "excluded_address"
 
         fun newInstance(
             request: String,
-            selectedSymbol: String? = null,
-            excludedSymbol: String? = null
+            selectedAddress: String? = null,
+            excludedAddress: String? = null
         ): SearchSwapTokenScreen {
             return SearchSwapTokenScreen().apply {
                 arguments = Bundle().apply {
                     putString(REQUEST_KEY, request)
-                    putString(SELECTED_SYMBOL, selectedSymbol)
-                    putString(EXCLUDED_SYMBOL, excludedSymbol)
+                    putString(SELECTED_ADDRESS, selectedAddress)
+                    putString(EXCLUDED_ADDRESS, excludedAddress)
                 }
             }
         }
