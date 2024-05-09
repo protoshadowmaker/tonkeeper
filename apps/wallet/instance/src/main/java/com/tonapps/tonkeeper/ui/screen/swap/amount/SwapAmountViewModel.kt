@@ -45,7 +45,12 @@ class SwapAmountViewModel(
         val state = uiStateFlow.value
         val tokenState = buildTokenState(dstToken)
             .copy(amountFormat = state.dstTokenState.amountFormat)
-        submitDataToUi(state.copy(dstTokenState = tokenState))
+        submitDataToUi(
+            state.copy(
+                dstTokenState = tokenState,
+                swapInfoState = SwapInfoState("", "", "", "", "", "")
+            )
+        )
     }
 
     fun onDestinationValueChanged(amount: Float) {

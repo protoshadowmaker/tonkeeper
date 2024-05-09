@@ -276,4 +276,10 @@
     <string name="balance">Balance: %1$s</string>
     <string name="choose_upper">CHOOSE</string>
     <string name="enter_amount">Enter Amount</string>
+    <string name="price_impact">Price impact</string>
+    <string name="minimum_received">Minimum received</string>
+    <string name="liquidity_provider_fee">Liquidity provider fee</string>
+    <string name="blockchain_fee">Blockchain fee</string>
+    <string name="route">Route</string>
+    <string name="provider">Provider</string>
 </resources>

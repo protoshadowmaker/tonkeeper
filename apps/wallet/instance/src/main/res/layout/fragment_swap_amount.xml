@@ -20,7 +20,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/srcInput"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/offsetMedium"
         android:background="@drawable/bg_content"
@@ -133,138 +133,179 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <uikit.widget.ColumnLayout
         android:id="@+id/dstInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/offsetMedium"
         android:layout_marginTop="@dimen/offsetMedium"
         android:background="@drawable/bg_content"
-        android:paddingHorizontal="@dimen/offsetMedium"
-        android:paddingBottom="@dimen/offsetMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/srcInput">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/captionReceive"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/offsetMedium"
-            android:paddingBottom="@dimen/offsetSmall"
-            android:text="@string/receive"
-            android:textAppearance="@style/TextAppearance.Body2"
-            android:textColor="?attr/textSecondaryColor"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/dstBalance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/offsetMedium"
-            android:paddingBottom="@dimen/offsetSmall"
-            android:text="@string/balance"
-            android:textAppearance="@style/TextAppearance.Body2"
-            android:textColor="?attr/textSecondaryColor"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/dstHeaderBarrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:barrierMargin="@dimen/offsetSmall"
-            app:constraint_referenced_ids="captionReceive,dstBalance" />
-
-        <com.tonapps.tonkeeper.fragment.send.view.AmountInput
-            android:id="@+id/dstValue"
-            android:layout_width="0dp"
-            android:layout_height="48.76dp"
-            android:layout_marginStart="@dimen/offsetSmall"
-            android:background="@null"
-            android:digits="0123456789.,"
-            android:enabled="false"
-            android:fontFamily="@font/montserrat_semi_bold"
-            android:gravity="center_vertical|end"
-            android:hint="0"
-            android:inputType="numberDecimal"
-            android:singleLine="true"
-            android:textColor="@color/edit_text_selector"
-            android:textCursorDrawable="@drawable/cursor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dstTokenContainer"
-            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
-
-        <uikit.widget.RowLayout
-            android:id="@+id/dstTokenContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_button_tertiary"
-            android:padding="@dimen/offsetExtraSmall"
-            app:layout_constraintBottom_toBottomOf="@id/dstValue"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/dstValue">
-
-            <uikit.widget.FrescoView
-                android:id="@+id/dstTokenIcon"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_oval"
-                android:backgroundTint="?attr/backgroundHighlightedColor"
-                android:visibility="gone"
-                app:roundAsCircle="true"
-                tools:visibility="visible" />
+            android:paddingHorizontal="@dimen/offsetMedium"
+            android:paddingBottom="@dimen/offsetMedium">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/dstToken"
+                android:id="@+id/captionReceive"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_button_tertiary"
-                android:drawablePadding="6dp"
-                android:gravity="center"
-                android:paddingHorizontal="6dp"
-                android:text="@string/choose_upper"
-                android:textAppearance="@style/TextAppearance.Label1"
-                android:textColor="?attr/buttonTertiaryForegroundColor"
-                app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
-        </uikit.widget.RowLayout>
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/offsetMedium"
+                android:paddingBottom="@dimen/offsetSmall"
+                android:text="@string/receive"
+                android:textAppearance="@style/TextAppearance.Body2"
+                android:textColor="?attr/textSecondaryColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/dstValueBarrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:barrierMargin="@dimen/offsetMedium"
-            app:constraint_referenced_ids="dstValue,dstTokenContainer" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/dstBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/offsetMedium"
+                android:paddingBottom="@dimen/offsetSmall"
+                android:text="@string/balance"
+                android:textAppearance="@style/TextAppearance.Body2"
+                android:textColor="?attr/textSecondaryColor"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/dstHeaderBarrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:barrierMargin="@dimen/offsetSmall"
+                app:constraint_referenced_ids="captionReceive,dstBalance" />
+
+            <com.tonapps.tonkeeper.fragment.send.view.AmountInput
+                android:id="@+id/dstValue"
+                android:layout_width="0dp"
+                android:layout_height="48.76dp"
+                android:layout_marginStart="@dimen/offsetSmall"
+                android:background="@null"
+                android:digits="0123456789.,"
+                android:enabled="false"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:gravity="center_vertical|end"
+                android:hint="0"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:textColor="@color/edit_text_selector"
+                android:textCursorDrawable="@drawable/cursor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dstTokenContainer"
+                app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
+
+            <uikit.widget.RowLayout
+                android:id="@+id/dstTokenContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_button_tertiary"
+                android:padding="@dimen/offsetExtraSmall"
+                app:layout_constraintBottom_toBottomOf="@id/dstValue"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/dstValue">
+
+                <uikit.widget.FrescoView
+                    android:id="@+id/dstTokenIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_oval"
+                    android:backgroundTint="?attr/backgroundHighlightedColor"
+                    android:visibility="gone"
+                    app:roundAsCircle="true"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/dstToken"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_button_tertiary"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:paddingHorizontal="6dp"
+                    android:text="@string/choose_upper"
+                    android:textAppearance="@style/TextAppearance.Label1"
+                    android:textColor="?attr/buttonTertiaryForegroundColor"
+                    app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier" />
+            </uikit.widget.RowLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <uikit.widget.ColumnLayout
             android:id="@+id/swapInfoContainer"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dstValueBarrier">
+            android:visibility="gone"
+            tools:visibility="visible">
 
-            <com.tonapps.tonkeeper.view.TransactionDetailView
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
                 android:id="@+id/rate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/lineInfoHeight" />
 
-            <com.tonapps.tonkeeper.view.TransactionDetailView
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
                 android:id="@+id/priceImpact"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/offsetSmall"
+                android:icon="@drawable/ic_information_circle_16"
+                android:minHeight="@dimen/lineInfoCompactHeight"
+                android:title="@string/price_impact" />
+
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                android:id="@+id/minimumReceived"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_information_circle_16"
+                android:minHeight="@dimen/lineInfoCompactHeight"
+                android:title="@string/minimum_received" />
+
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                android:id="@+id/providerFee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_information_circle_16"
+                android:minHeight="@dimen/lineInfoCompactHeight"
+                android:title="@string/liquidity_provider_fee" />
+
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                android:id="@+id/blockchainFee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/lineInfoCompactHeight"
+                android:title="@string/blockchain_fee" />
+
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                android:id="@+id/route"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/lineInfoCompactHeight"
+                android:title="@string/route" />
+
+            <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                android:id="@+id/provider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/offsetSmall"
+                android:minHeight="@dimen/lineInfoCompactHeight"
+                android:title="@string/provider" />
+
         </uikit.widget.ColumnLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </uikit.widget.ColumnLayout>
 
     <Button
         android:id="@+id/action"

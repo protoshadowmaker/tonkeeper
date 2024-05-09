@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LabelEditorView">
-        <attr name="android:button" format="string|reference"/>
+        <attr name="android:button" format="string|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="LineInfoSimpleView">
+        <attr name="android:title" format="string|reference" />
+        <attr name="android:icon" format="reference" />
     </declare-styleable>
 </resources>

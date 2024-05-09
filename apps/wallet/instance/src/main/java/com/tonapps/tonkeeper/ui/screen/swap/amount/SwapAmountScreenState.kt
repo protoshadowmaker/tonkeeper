@@ -5,6 +5,7 @@ import android.net.Uri
 data class SwapAmountScreenState(
     val srcTokenState: TokenState,
     val dstTokenState: TokenState,
+    val swapInfoState: SwapInfoState? = null
 )
 
 data class TokenState(
@@ -17,4 +18,13 @@ data class TokenState(
     val amount: Float = 0f,
     val amountFormat: CharSequence = "0",
     val updateAmount: Boolean = false,
+)
+
+data class SwapInfoState(
+    val priceImpact: String,
+    val minimumReceived: String,
+    val providerFee: String,
+    val blockchainFee: String,
+    val route: String,
+    val provider: String
 )

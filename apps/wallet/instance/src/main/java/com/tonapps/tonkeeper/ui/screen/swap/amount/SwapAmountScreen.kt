@@ -9,6 +9,7 @@ import com.tonapps.blockchain.Coin
 import com.tonapps.tonkeeper.fragment.send.view.AmountInput
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenScreen
 import com.tonapps.tonkeeper.ui.screen.swap.settings.SwapSettingsScreen
+import com.tonapps.tonkeeper.view.LineInfoSimpleView
 import com.tonapps.tonkeeperx.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
@@ -16,6 +17,7 @@ import uikit.extensions.collectFlow
 import uikit.extensions.gone
 import uikit.extensions.invisible
 import uikit.extensions.visible
+import uikit.extensions.withAnimation
 import uikit.navigation.Navigation.Companion.navigation
 import uikit.widget.FrescoView
 import uikit.widget.HeaderView
@@ -37,6 +39,15 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private val dstTokenIcon: FrescoView by lazy { requireView().findViewById(R.id.dstTokenIcon) }
     private val dstValueInput: AmountInput by lazy { requireView().findViewById(R.id.dstValue) }
     private val actionButton: Button by lazy { requireView().findViewById(R.id.action) }
+
+    private val swapInfoContainer: View by lazy { requireView().findViewById(R.id.swapInfoContainer) }
+    private val rate: LineInfoSimpleView by lazy { requireView().findViewById(R.id.rate) }
+    private val priceImpact: LineInfoSimpleView by lazy { requireView().findViewById(R.id.priceImpact) }
+    private val minimumReceived: LineInfoSimpleView by lazy { requireView().findViewById(R.id.minimumReceived) }
+    private val providerFee: LineInfoSimpleView by lazy { requireView().findViewById(R.id.providerFee) }
+    private val blockchainFee: LineInfoSimpleView by lazy { requireView().findViewById(R.id.blockchainFee) }
+    private val route: LineInfoSimpleView by lazy { requireView().findViewById(R.id.route) }
+    private val provider: LineInfoSimpleView by lazy { requireView().findViewById(R.id.provider) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,6 +140,23 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
                 )
             )
         }
+        onSwapInfoStateChanged(state.swapInfoState)
+    }
+
+    private fun onSwapInfoStateChanged(swapInfoState: SwapInfoState?) {
+        if (swapInfoState == null) {
+            post {
+                withAnimation(duration = ANIMATION_DURATION) {
+                    swapInfoContainer.gone()
+                }
+            }
+            return
+        }
+        post {
+            withAnimation(duration = ANIMATION_DURATION) {
+                swapInfoContainer.visible()
+            }
+        }
     }
 
     private fun AmountInput.getValue(): Float {
@@ -138,6 +166,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
 
     companion object {
 
+        private const val ANIMATION_DURATION = 1800L
         private const val SRC_TOKEN_REQUEST_KEY = "src_token_request"
         private const val DST_TOKEN_REQUEST_KEY = "dst_token_request"
 

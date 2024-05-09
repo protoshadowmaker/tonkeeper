@@ -272,4 +272,10 @@
     <string name="balance">Баланс: %1$s</string>
     <string name="choose_upper">ВЫБРАТЬ</string>
     <string name="enter_amount">Введите Количество</string>
+    <string name="price_impact">Влияние на цену</string>
+    <string name="minimum_received">Минимальная сумма</string>
+    <string name="liquidity_provider_fee">Комиссия поставщику ликвидности</string>
+    <string name="blockchain_fee">Комиссия блокчейна</string>
+    <string name="route">Маршрут</string>
+    <string name="provider">Провайдер</string>
 </resources>
