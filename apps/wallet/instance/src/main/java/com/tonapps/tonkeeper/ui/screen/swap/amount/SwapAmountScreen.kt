@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import com.tonapps.blockchain.Coin
 import com.tonapps.tonkeeper.fragment.send.view.AmountInput
+import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapScreen
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenScreen
 import com.tonapps.tonkeeper.ui.screen.swap.settings.SwapSettingsScreen
 import com.tonapps.tonkeeper.view.LineInfoSimpleView
@@ -77,6 +78,9 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         }
         dstValueInput.doOnTextChanged { _, _, _, _ ->
             viewModel.onDestinationValueChanged(srcValueInput.getValue())
+        }
+        actionButton.setOnClickListener {
+            navigation?.add(ConfirmSwapScreen.newInstance())
         }
 
         collectFlow(viewModel.uiStateFlow) { state ->
