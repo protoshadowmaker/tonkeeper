@@ -28,3 +28,7 @@ inline fun <reified R> Bundle.getParcelableCompat(key: String): R? {
         null
     }
 }
+
+fun Bundle.requireString(key: String): String {
+    return requireNotNull(getString(key)) { "Value for $key not exists" }
+}

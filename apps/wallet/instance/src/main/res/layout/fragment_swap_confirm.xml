@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <uikit.widget.webview.bridge.BridgeWebView
+        android:id="@+id/web"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <uikit.widget.HeaderView
         android:id="@+id/header"
         android:layout_width="0dp"
@@ -16,13 +25,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <uikit.widget.webview.bridge.BridgeWebView
-        android:id="@+id/web"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <Button
+        android:id="@+id/action"
+        style="@style/Widget.App.Button.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/offsetMedium"
+        android:layout_marginTop="@dimen/offsetLarge"
+        android:layout_marginBottom="@dimen/offsetMedium"
+        android:text="@string/enter_amount"
+        android:textAppearance="@style/TextAppearance.Label1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header" />
-
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
