@@ -2,7 +2,7 @@ package com.tonapps.wallet.data.swap.entity
 
 import fi.ston.models.DexReverseSimulateSwap200Response
 
-data class SwapInfo(
+data class SwapInfoEntity(
     val offerValue: Long,
     val askValue: Long,
     val swapRate: Float,
@@ -11,8 +11,8 @@ data class SwapInfo(
     val liquidityFee: Long
 )
 
-fun DexReverseSimulateSwap200Response.toSwapInfo(): SwapInfo {
-    return SwapInfo(
+fun DexReverseSimulateSwap200Response.toSwapInfo(): SwapInfoEntity {
+    return SwapInfoEntity(
         offerValue = this.offerUnits.toLong(),
         askValue = this.askUnits.toLong(),
         swapRate = this.swapRate.toFloat(),

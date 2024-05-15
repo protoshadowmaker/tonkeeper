@@ -78,7 +78,7 @@ object CurrencyFormatter {
 
     private fun formatFloat(
         value: Float,
-        decimals: Int,
+        decimals: IntRange,
     ): String {
         if (0f >= value) {
             return "0"
@@ -91,6 +91,14 @@ object CurrencyFormatter {
         value: Float,
         decimals: Int,
     ): CharSequence {
+        return format(currency, value, decimals..decimals)
+    }
+
+    fun format(
+        currency: String = "",
+        value: Float,
+        decimals: IntRange,
+    ): CharSequence {
         val amount = formatFloat(value, decimals)
         return format(currency, amount)
     }
@@ -100,7 +108,7 @@ object CurrencyFormatter {
         value: BigInteger,
         decimals: Int
     ): CharSequence {
-        val amount = getFormat(decimals).format(value)
+        val amount = getFormat(decimals..decimals).format(value)
         return format(currency, amount)
     }
 
@@ -121,7 +129,7 @@ object CurrencyFormatter {
             bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_DOWN)
         }
         val decimals = bigDecimal.scale()
-        val amount = getFormat(decimals).format(value)
+        val amount = getFormat(decimals..decimals).format(value)
         return format(currency, amount)
     }
 
@@ -134,7 +142,7 @@ object CurrencyFormatter {
             bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_DOWN)
         }
         val decimals = bigDecimal.scale()
-        val amount = getFormat(decimals).format(value)
+        val amount = getFormat(decimals..decimals).format(value)
         return format(currency, amount)
     }
 
@@ -198,7 +206,7 @@ object CurrencyFormatter {
         return 2
     }
 
-    private fun getFormat(decimals: Int): DecimalFormat {
+    private fun getFormat(decimals: IntRange): DecimalFormat {
         val key = cacheKey(decimals)
         var format = cache[key]
         if (format == null) {
@@ -208,14 +216,14 @@ object CurrencyFormatter {
         return format
     }
 
-    private fun cacheKey(decimals: Int): String {
+    private fun cacheKey(decimals: IntRange): String {
         return decimals.toString()
     }
 
-    private fun createFormat(decimals: Int): DecimalFormat {
+    private fun createFormat(decimals: IntRange): DecimalFormat {
         val decimalFormat = DecimalFormat(pattern)
-        decimalFormat.maximumFractionDigits = decimals
-        decimalFormat.minimumFractionDigits = decimals
+        decimalFormat.maximumFractionDigits = decimals.last
+        decimalFormat.minimumFractionDigits = decimals.first
         decimalFormat.groupingSize = 3
         decimalFormat.isGroupingUsed = true
         return decimalFormat

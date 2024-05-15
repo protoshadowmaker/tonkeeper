@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.widget.doOnTextChanged
 import com.tonapps.blockchain.Coin
 import com.tonapps.tonkeeper.fragment.send.view.AmountInput
 import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapScreen
@@ -39,7 +38,6 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private val dstTokenTextView: TextView by lazy { requireView().findViewById(R.id.dstToken) }
     private val dstTokenIcon: FrescoView by lazy { requireView().findViewById(R.id.dstTokenIcon) }
     private val dstValueInput: AmountInput by lazy { requireView().findViewById(R.id.dstValue) }
-    private val actionButton: Button by lazy { requireView().findViewById(R.id.action) }
 
     private val swapInfoContainer: View by lazy { requireView().findViewById(R.id.swapInfoContainer) }
     private val rate: LineInfoSimpleView by lazy { requireView().findViewById(R.id.rate) }
@@ -49,6 +47,20 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private val blockchainFee: LineInfoSimpleView by lazy { requireView().findViewById(R.id.blockchainFee) }
     private val route: LineInfoSimpleView by lazy { requireView().findViewById(R.id.route) }
     private val provider: LineInfoSimpleView by lazy { requireView().findViewById(R.id.provider) }
+
+    private val action: Button by lazy { requireView().findViewById(R.id.action) }
+    private val continueAction: Button by lazy { requireView().findViewById(R.id.continueAction) }
+    private val actionLoader: View by lazy { requireView().findViewById(R.id.actionLoader) }
+
+    private val srcTextChangeListener: ToggleableTextWatcher =
+        ToggleableTextWatcher(onTextChanged = { _, _, _, _ ->
+            viewModel.onSourceValueChanged(srcValueInput.getValue())
+        })
+
+    private val dstTextChangeListener: ToggleableTextWatcher =
+        ToggleableTextWatcher(onTextChanged = { _, _, _, _ ->
+            viewModel.onDestinationValueChanged(dstValueInput.getValue())
+        })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,13 +85,9 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         headerView.doOnCloseClick = {
             navigation?.add(SwapSettingsScreen.newInstance())
         }
-        srcValueInput.doOnTextChanged { _, _, _, _ ->
-            viewModel.onSourceValueChanged(srcValueInput.getValue())
-        }
-        dstValueInput.doOnTextChanged { _, _, _, _ ->
-            viewModel.onDestinationValueChanged(srcValueInput.getValue())
-        }
-        actionButton.setOnClickListener {
+        srcValueInput.addTextChangedListener(srcTextChangeListener)
+        dstValueInput.addTextChangedListener(dstTextChangeListener)
+        continueAction.setOnClickListener {
             navigation?.add(ConfirmSwapScreen.newInstance())
         }
 
@@ -89,88 +97,131 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     }
 
     private fun onStateChanged(state: SwapAmountScreenState) {
-        srcTokenTextView.text = state.srcTokenState.symbol
-        if (state.srcTokenState.selected) {
-            srcTokenIcon.setImageURI(state.srcTokenState.iconUri)
+        onSrcTokenStateChanged(state.srcTokenState)
+        onDstTokenStateChanged(state.dstTokenState)
+        onSwapInfoStateChanged(state.swapInfoState)
+        onActionStateChanged(state.swapActionState)
+    }
+
+    private fun onSrcTokenStateChanged(state: TokenState) {
+        srcTokenTextView.text = state.symbol
+        srcValueInput.isEnabled = state.selected
+        if (state.selected) {
+            srcTokenIcon.setImageURI(state.iconUri)
             srcTokenIcon.visible()
         } else {
             srcTokenIcon.clear(null)
             srcTokenIcon.gone()
         }
-        if (state.srcTokenState.balanceFormat != null) {
-            srcBalanceTextView.text = state.srcTokenState.balanceFormat
+        if (state.balanceFormat != null) {
+            srcBalanceTextView.text = state.balanceFormat
             srcBalanceTextView.visible()
             maxValueTextView.visible()
         } else {
             srcBalanceTextView.invisible()
             maxValueTextView.invisible()
         }
-        if (state.srcTokenState.updateAmount) {
-            srcValueInput.setText(state.srcTokenState.amountFormat)
-        }
-
-        dstTokenTextView.text = state.dstTokenState.symbol
-        if (state.dstTokenState.selected) {
-            dstTokenIcon.setImageURI(state.dstTokenState.iconUri)
-            dstTokenIcon.visible()
-        } else {
-            dstTokenIcon.clear(null)
-            dstTokenIcon.gone()
-        }
-        if (state.dstTokenState.balanceFormat != null) {
-            dstBalanceTextView.text = state.dstTokenState.balanceFormat
-            dstBalanceTextView.visible()
-        } else {
-            dstBalanceTextView.invisible()
-        }
-        if (state.dstTokenState.updateAmount) {
-            dstValueInput.setText(state.dstTokenState.amountFormat)
+        if (!state.base) {
+            srcTextChangeListener.ignore {
+                srcValueInput.setTextKeepState(state.amountFormat)
+            }
         }
 
         srcTokenContainer.setOnClickListener {
             navigation?.add(
                 SearchSwapTokenScreen.newInstance(
                     request = SRC_TOKEN_REQUEST_KEY,
-                    selectedAddress = state.srcTokenState.address
+                    selectedAddress = state.address
                 )
             )
         }
+    }
+
+    private fun onDstTokenStateChanged(state: TokenState) {
+        dstTokenTextView.text = state.symbol
+        dstValueInput.isEnabled = state.selected
+        if (state.selected) {
+            dstTokenIcon.setImageURI(state.iconUri)
+            dstTokenIcon.visible()
+        } else {
+            dstTokenIcon.clear(null)
+            dstTokenIcon.gone()
+        }
+        if (state.balanceFormat != null) {
+            dstBalanceTextView.text = state.balanceFormat
+            dstBalanceTextView.visible()
+        } else {
+            dstBalanceTextView.invisible()
+        }
+        if (!state.base) {
+            dstTextChangeListener.ignore {
+                dstValueInput.setTextKeepState(state.amountFormat)
+            }
+        }
+
         dstTokenContainer.setOnClickListener {
             navigation?.add(
                 SearchSwapTokenScreen.newInstance(
                     DST_TOKEN_REQUEST_KEY,
-                    selectedAddress = state.dstTokenState.address,
-                    excludedAddress = state.srcTokenState.address
+                    selectedAddress = state.address,
+                    excludedAddress = state.address
                 )
             )
         }
-        onSwapInfoStateChanged(state.swapInfoState)
     }
 
-    private fun onSwapInfoStateChanged(swapInfoState: SwapInfoState?) {
-        if (swapInfoState == null) {
+    private fun onSwapInfoStateChanged(state: SwapInfoState?) {
+        if (state == null) {
             post {
-                withAnimation(duration = ANIMATION_DURATION) {
-                    swapInfoContainer.gone()
-                }
+                withAnimation(duration = ANIMATION_DURATION) { swapInfoContainer.gone() }
             }
             return
         }
+        if (state.loading) {
+            rate.setLoading()
+        } else {
+            rate.setDefault()
+        }
+        rate.title = state.swapRate
+        priceImpact.value = state.priceImpact
+        minimumReceived.value = state.minimumReceived
+        providerFee.value = state.providerFee
+        blockchainFee.value = state.blockchainFee
+        route.value = state.route
+        provider.value = state.provider
         post {
-            withAnimation(duration = ANIMATION_DURATION) {
-                swapInfoContainer.visible()
-            }
+            withAnimation(duration = ANIMATION_DURATION) { swapInfoContainer.visible() }
         }
     }
 
-    private fun AmountInput.getValue(): Float {
-        val text = Coin.prepareValue(text.toString())
-        return text.toFloatOrNull() ?: 0f
+    private fun onActionStateChanged(state: SwapActionState) {
+        action.gone()
+        actionLoader.gone()
+        continueAction.gone()
+        when (state) {
+            SwapActionState.ENTER_AMOUNT -> {
+                action.visible()
+                action.setText(com.tonapps.wallet.localization.R.string.enter_amount)
+            }
+
+            SwapActionState.CHOOSE_TOKEN -> {
+                action.visible()
+                action.setText(com.tonapps.wallet.localization.R.string.choose_token)
+            }
+
+            SwapActionState.PROGRESS -> actionLoader.visible()
+
+            SwapActionState.CONTINUE -> continueAction.visible()
+        }
+    }
+
+    private fun AmountInput.getValue(): String {
+        return Coin.prepareValue(text.toString())
     }
 
     companion object {
 
-        private const val ANIMATION_DURATION = 1800L
+        private const val ANIMATION_DURATION = 180L
         private const val SRC_TOKEN_REQUEST_KEY = "src_token_request"
         private const val DST_TOKEN_REQUEST_KEY = "dst_token_request"
 

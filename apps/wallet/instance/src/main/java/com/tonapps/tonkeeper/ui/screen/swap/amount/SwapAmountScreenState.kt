@@ -5,7 +5,8 @@ import android.net.Uri
 data class SwapAmountScreenState(
     val srcTokenState: TokenState,
     val dstTokenState: TokenState,
-    val swapInfoState: SwapInfoState? = null
+    val swapInfoState: SwapInfoState? = null,
+    val swapActionState: SwapActionState = SwapActionState.ENTER_AMOUNT
 )
 
 data class TokenState(
@@ -17,14 +18,20 @@ data class TokenState(
     val balanceFormat: CharSequence? = null,
     val amount: Float = 0f,
     val amountFormat: CharSequence = "0",
-    val updateAmount: Boolean = false,
+    val base: Boolean = false,
 )
 
 data class SwapInfoState(
-    val priceImpact: String,
-    val minimumReceived: String,
-    val providerFee: String,
+    val loading: Boolean,
+    val swapRate: CharSequence,
+    val priceImpact: CharSequence,
+    val minimumReceived: CharSequence,
+    val providerFee: CharSequence,
     val blockchainFee: String,
     val route: String,
     val provider: String
 )
+
+enum class SwapActionState {
+    ENTER_AMOUNT, CHOOSE_TOKEN, PROGRESS, CONTINUE
+}

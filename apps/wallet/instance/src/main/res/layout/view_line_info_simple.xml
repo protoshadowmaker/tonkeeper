@@ -39,8 +39,8 @@
 
         <uikit.widget.LoaderView
             android:id="@+id/loader"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
             android:layout_gravity="end"
             android:visibility="gone" />
 

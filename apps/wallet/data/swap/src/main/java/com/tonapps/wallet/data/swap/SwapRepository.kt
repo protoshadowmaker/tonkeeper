@@ -1,7 +1,7 @@
 package com.tonapps.wallet.data.swap
 
 import com.tonapps.wallet.api.API
-import com.tonapps.wallet.data.swap.entity.SwapInfo
+import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
 import com.tonapps.wallet.data.swap.entity.toSwapInfo
 import com.tonapps.wallet.data.swap.entity.toSwapTokenEntity
@@ -24,13 +24,31 @@ class SwapRepository(
         askAddress: String,
         units: Long,
         slippageTolerance: Float
-    ): SwapInfo = withContext(Dispatchers.IO) {
-        api.dex().dexSimulateSwap(
-            offerAddress = offerAddress,
-            askAddress = askAddress,
-            units = units.toString(),
-            slippageTolerance = slippageTolerance.toString().replace(",", ".")
-        ).toSwapInfo()
+    ): Result<SwapInfoEntity> = withContext(Dispatchers.IO) {
+        runCatching {
+            api.dex().dexSimulateSwap(
+                offerAddress = offerAddress,
+                askAddress = askAddress,
+                units = units.toString(),
+                slippageTolerance = slippageTolerance.toString().replace(",", ".")
+            ).toSwapInfo()
+        }
+    }
+
+    suspend fun getReverseSwapInfo(
+        offerAddress: String,
+        askAddress: String,
+        units: Long,
+        slippageTolerance: Float
+    ): Result<SwapInfoEntity> = withContext(Dispatchers.IO) {
+        runCatching {
+            api.dex().dexReverseSimulateSwap(
+                offerAddress = offerAddress,
+                askAddress = askAddress,
+                units = units.toString(),
+                slippageTolerance = slippageTolerance.toString().replace(",", ".")
+            ).toSwapInfo()
+        }
     }
 
     suspend fun getRemote(): List<SwapTokenEntity> = withContext(Dispatchers.IO) {
