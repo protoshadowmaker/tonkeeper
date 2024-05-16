@@ -48,6 +48,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private val route: LineInfoSimpleView by lazy { requireView().findViewById(R.id.route) }
     private val provider: LineInfoSimpleView by lazy { requireView().findViewById(R.id.provider) }
 
+    private val swapTokens: View by lazy { requireView().findViewById(R.id.swapTokens) }
     private val action: Button by lazy { requireView().findViewById(R.id.action) }
     private val continueAction: Button by lazy { requireView().findViewById(R.id.continueAction) }
     private val actionLoader: View by lazy { requireView().findViewById(R.id.actionLoader) }
@@ -90,6 +91,9 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         continueAction.setOnClickListener {
             navigation?.add(ConfirmSwapScreen.newInstance())
         }
+        swapTokens.setOnClickListener {
+            viewModel.onSwaTokensClicked()
+        }
 
         collectFlow(viewModel.uiStateFlow) { state ->
             onStateChanged(state)
@@ -97,13 +101,19 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     }
 
     private fun onStateChanged(state: SwapAmountScreenState) {
-        onSrcTokenStateChanged(state.srcTokenState)
-        onDstTokenStateChanged(state.dstTokenState)
+        onSrcTokenStateChanged(
+            state.srcTokenState,
+            state.sideEffects.contains(SideEffect.UPDATE_SRC_TOKEN)
+        )
+        onDstTokenStateChanged(
+            state.dstTokenState,
+            state.sideEffects.contains(SideEffect.UPDATE_DST_TOKEN)
+        )
         onSwapInfoStateChanged(state.swapInfoState)
         onActionStateChanged(state.swapActionState)
     }
 
-    private fun onSrcTokenStateChanged(state: TokenState) {
+    private fun onSrcTokenStateChanged(state: TokenState, updateValue: Boolean) {
         srcTokenTextView.text = state.symbol
         srcValueInput.isEnabled = state.selected
         if (state.selected) {
@@ -121,7 +131,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             srcBalanceTextView.invisible()
             maxValueTextView.invisible()
         }
-        if (!state.base) {
+        if (updateValue) {
             srcTextChangeListener.ignore {
                 srcValueInput.setTextKeepState(state.amountFormat)
             }
@@ -137,7 +147,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         }
     }
 
-    private fun onDstTokenStateChanged(state: TokenState) {
+    private fun onDstTokenStateChanged(state: TokenState, updateValue: Boolean) {
         dstTokenTextView.text = state.symbol
         dstValueInput.isEnabled = state.selected
         if (state.selected) {
@@ -153,7 +163,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         } else {
             dstBalanceTextView.invisible()
         }
-        if (!state.base) {
+        if (updateValue) {
             dstTextChangeListener.ignore {
                 dstValueInput.setTextKeepState(state.amountFormat)
             }

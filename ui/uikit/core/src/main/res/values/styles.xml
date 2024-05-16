@@ -47,6 +47,14 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="Widget.App.Button.Circle">
+        <item name="android:background">@drawable/bg_button_secondary_circle</item>
+        <item name="android:minHeight">@dimen/circleButtonSize</item>
+        <item name="android:minWidth">@dimen/circleButtonSize</item>
+        <item name="android:tint">?attr/buttonSecondaryForegroundColor</item>
+        <item name="android:backgroundTint">?attr/buttonTertiaryBackgroundColor</item>
+    </style>
+
     <style name="Widget.App.Tabs" parent="Widget.Design.TabLayout">
         <item name="tabTextAppearance">@style/Widget.App.Tabs.TextAppearance</item>
     </style>
@@ -75,7 +83,9 @@
 
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/use_light_system_bars</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">
+            @bool/use_light_system_bars
+        </item>
 
     </style>
 

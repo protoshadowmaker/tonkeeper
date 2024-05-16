@@ -6,7 +6,8 @@ data class SwapAmountScreenState(
     val srcTokenState: TokenState,
     val dstTokenState: TokenState,
     val swapInfoState: SwapInfoState? = null,
-    val swapActionState: SwapActionState = SwapActionState.ENTER_AMOUNT
+    val swapActionState: SwapActionState = SwapActionState.ENTER_AMOUNT,
+    val sideEffects: Set<SideEffect> = emptySet()
 )
 
 data class TokenState(
@@ -17,8 +18,7 @@ data class TokenState(
     val iconUri: Uri? = null,
     val balanceFormat: CharSequence? = null,
     val amount: Float = 0f,
-    val amountFormat: CharSequence = "0",
-    val base: Boolean = false,
+    val amountFormat: CharSequence = "0"
 )
 
 data class SwapInfoState(
@@ -34,4 +34,8 @@ data class SwapInfoState(
 
 enum class SwapActionState {
     ENTER_AMOUNT, CHOOSE_TOKEN, PROGRESS, CONTINUE
+}
+
+enum class SideEffect {
+    UPDATE_SRC_TOKEN, UPDATE_DST_TOKEN
 }
