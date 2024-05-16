@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 
 class SwapAmountViewModel(
@@ -60,17 +61,30 @@ class SwapAmountViewModel(
     fun onSourceValueChanged(amount: String) {
         val srcToken = this.srcToken ?: return
         srcAmount = Coin.bigDecimal(amount, srcToken.decimals).toLong()
+        val state = this.state
+        val swapInfoState: SwapInfoState?
+        val dstTokenState: TokenState
+        val sideEffects: Set<SideEffect>
         if (srcAmount == 0L) {
             dstAmount = 0
+            swapInfoState = null
+            dstTokenState = state.dstTokenState.copy(amountFormat = "")
+            sideEffects = setOf(SideEffect.UPDATE_DST_TOKEN)
+        } else {
+            swapInfoState = state.swapInfoState
+            dstTokenState = state.dstTokenState
+            sideEffects = emptySet()
         }
         reverse = false
-        val state = this.state
         val formatAmount = srcToken.formatCoins(srcAmount).toString()
         prepareAndSubmitDataToUi(
             state.copy(
                 srcTokenState = state.srcTokenState.copy(amountFormat = formatAmount),
+                dstTokenState = dstTokenState,
+                swapInfoState = swapInfoState,
                 swapActionState = buildActionState(state.swapInfoState)
-            )
+            ),
+            sideEffects = sideEffects
         )
         loadSwapRate()
     }
@@ -95,17 +109,31 @@ class SwapAmountViewModel(
     fun onDestinationValueChanged(amount: String) {
         val dstToken = this.dstToken ?: return
         dstAmount = Coin.bigDecimal(amount, dstToken.decimals).toLong()
+        val state = this.state
+        val swapInfoState: SwapInfoState?
+        val srcTokenState: TokenState
+        val sideEffects: Set<SideEffect>
         if (dstAmount == 0L) {
             srcAmount = 0
+            swapInfoState = null
+            srcTokenState = state.srcTokenState.copy(amountFormat = "")
+            sideEffects = setOf(SideEffect.UPDATE_SRC_TOKEN)
+        } else {
+            swapInfoState = state.swapInfoState
+            srcTokenState = state.srcTokenState
+            sideEffects = emptySet()
         }
         reverse = true
-        val state = this.state
+
         val formatAmount = dstToken.formatCoins(dstAmount)
         prepareAndSubmitDataToUi(
             state.copy(
+                srcTokenState = srcTokenState,
                 dstTokenState = state.dstTokenState.copy(amountFormat = formatAmount),
+                swapInfoState = swapInfoState,
                 swapActionState = buildActionState(state.swapInfoState)
-            )
+            ),
+            sideEffects = sideEffects
         )
         loadSwapRate()
     }
@@ -256,7 +284,7 @@ class SwapAmountViewModel(
 
     private fun SwapTokenEntity.formatCoins(value: Long): CharSequence {
         return CurrencyFormatter.format(
-            value = Coin.toCoins(value, decimals),
+            value = BigDecimal.valueOf(value).divide(BigDecimal.TEN.pow(decimals)),
             decimals = 0..decimals,
             group = false
         )

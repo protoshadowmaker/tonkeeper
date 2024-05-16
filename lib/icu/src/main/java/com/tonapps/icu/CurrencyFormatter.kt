@@ -128,6 +128,16 @@ object CurrencyFormatter {
 
     fun format(
         currency: String = "",
+        value: BigDecimal,
+        decimals: IntRange,
+        group: Boolean = true
+    ): CharSequence {
+        val amount = getFormat(decimals, group).format(value)
+        return format(currency, amount)
+    }
+
+    fun format(
+        currency: String = "",
         value: BigDecimal
     ): CharSequence {
         var bigDecimal = value.stripTrailingZeros()
