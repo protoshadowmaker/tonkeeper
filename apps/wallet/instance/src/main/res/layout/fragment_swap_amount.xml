@@ -61,14 +61,18 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/srcBalance"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="end"
+            android:paddingStart="@dimen/offsetSmall"
             android:paddingTop="@dimen/offsetMedium"
+            android:paddingEnd="0dp"
             android:paddingBottom="@dimen/offsetSmall"
             android:text="@string/balance"
             android:textAppearance="@style/TextAppearance.Body2"
             android:textColor="?attr/textSecondaryColor"
             app:layout_constraintEnd_toStartOf="@id/amountMax"
+            app:layout_constraintStart_toEndOf="@id/captionSend"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -139,8 +143,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/offsetMedium"
         android:layout_marginTop="@dimen/offsetSmall"
-        android:paddingTop="12dp"
         android:background="@drawable/bg_content"
+        android:paddingTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/srcInput">
@@ -166,15 +170,19 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/dstBalance"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingStart="@dimen/offsetSmall"
                 android:paddingTop="@dimen/offsetMedium"
+                android:paddingEnd="0dp"
                 android:paddingBottom="@dimen/offsetSmall"
                 android:text="@string/balance"
                 android:textAppearance="@style/TextAppearance.Body2"
                 android:textColor="?attr/textSecondaryColor"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/captionReceive"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 

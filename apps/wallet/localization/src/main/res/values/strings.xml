@@ -283,4 +283,7 @@
     <string name="route">Route</string>
     <string name="provider">Provider</string>
     <string name="confirm_swap_capital">Confirm Swap</string>
+    <string name="price_impact_info">The difference between the market price and estimated price due to trade size.</string>
+    <string name="minimum_received_info">Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.</string>
+    <string name="liquidity_provider_fee_info">A portion of each trade goes to liquidity providers as a protocol incentive.</string>
 </resources>

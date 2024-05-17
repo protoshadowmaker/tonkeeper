@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.tonapps.blockchain.Coin
+import com.tonapps.tonkeeper.extensions.toast
 import com.tonapps.tonkeeper.fragment.send.view.AmountInput
 import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapScreen
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenScreen
@@ -92,7 +93,19 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             navigation?.add(ConfirmSwapScreen.newInstance())
         }
         swapTokens.setOnClickListener {
-            viewModel.onSwaTokensClicked()
+            viewModel.onSwapTokensClicked()
+        }
+        maxValueTextView.setOnClickListener {
+            viewModel.onMaxClicked()
+        }
+        priceImpact.setOnClickListener {
+            navigation?.toast(getString(com.tonapps.wallet.localization.R.string.price_impact_info))
+        }
+        minimumReceived.setOnClickListener {
+            navigation?.toast(getString(com.tonapps.wallet.localization.R.string.minimum_received_info))
+        }
+        providerFee.setOnClickListener {
+            navigation?.toast(getString(com.tonapps.wallet.localization.R.string.liquidity_provider_fee_info))
         }
 
         collectFlow(viewModel.uiStateFlow) { state ->

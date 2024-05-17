@@ -279,4 +279,7 @@
     <string name="route">Маршрут</string>
     <string name="provider">Провайдер</string>
     <string name="confirm_swap_capital">Подтвердить обмен</string>
+    <string name="price_impact_info">Разница между рыночной и расчетной ценой из-за размера сделки.</string>
+    <string name="minimum_received_info">Ваша сделка вернется назад, если до ее подтверждения произойдет сильное, неблагоприятное движение цены.</string>
+    <string name="liquidity_provider_fee_info">Часть каждой сделки идет поставщикам ликвидности в качестве поощрения по протоколу.</string>
 </resources>

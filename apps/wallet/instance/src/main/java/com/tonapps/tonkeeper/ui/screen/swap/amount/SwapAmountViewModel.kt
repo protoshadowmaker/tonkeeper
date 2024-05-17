@@ -3,27 +3,37 @@ package com.tonapps.tonkeeper.ui.screen.swap.amount
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tonapps.blockchain.Coin
+import com.tonapps.blockchain.ton.extensions.toUserFriendly
 import com.tonapps.icu.CurrencyFormatter
+import com.tonapps.wallet.data.account.WalletRepository
 import com.tonapps.wallet.data.settings.SettingsRepository
 import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
+import com.tonapps.wallet.data.token.TokenRepository
+import com.tonapps.wallet.data.token.entities.AccountTokenEntity
 import com.tonapps.wallet.localization.LocalizationRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.time.Duration.Companion.seconds
 
 class SwapAmountViewModel(
     private val l10n: LocalizationRepository,
+    private val walletRepository: WalletRepository,
+    private val tokenRepository: TokenRepository,
     private val settings: SettingsRepository,
     private val swapRepository: SwapRepository
 ) : ViewModel() {
 
+    private var tokensMap: Map<String, AccountTokenEntity> = emptyMap()
     private var srcToken: SwapTokenEntity? = SwapTokenEntity.TON
     private var dstToken: SwapTokenEntity? = null
     private var srcAmount: Long = 0
@@ -40,6 +50,32 @@ class SwapAmountViewModel(
     )
     val uiStateFlow: StateFlow<SwapAmountScreenState> = _uiStateFlow.asStateFlow()
     val state: SwapAmountScreenState get() = uiStateFlow.value
+
+    init {
+        combine(
+            walletRepository.activeWalletFlow,
+            settings.currencyFlow
+        ) { wallet, currency ->
+            tokensMap = tokenRepository
+                .getLocal(currency, wallet.accountId, wallet.testnet)
+                .associateBy {
+                    if (it.address == "TON") {
+                        SwapTokenEntity.TON.contractAddress
+                    } else {
+                        it.address.toUserFriendly(
+                            wallet = false,
+                            testnet = wallet.testnet
+                        )
+                    }
+                }
+            prepareAndSubmitDataToUi(
+                state.copy(
+                    srcTokenState = buildTokenState(srcToken),
+                    dstTokenState = buildTokenState(dstToken)
+                )
+            )
+        }.launchIn(viewModelScope)
+    }
 
     fun onSourceChanged(contractAddress: String) {
         if (srcToken?.contractAddress == contractAddress) {
@@ -138,7 +174,7 @@ class SwapAmountViewModel(
         loadSwapRate()
     }
 
-    fun onSwaTokensClicked() {
+    fun onSwapTokensClicked() {
         val swapToken = srcToken
         srcToken = dstToken
         dstToken = swapToken
@@ -159,6 +195,20 @@ class SwapAmountViewModel(
         loadSwapRate()
     }
 
+    fun onMaxClicked() {
+        val srcToken = this.srcToken ?: return
+        val srcAccount = tokensMap[srcToken.contractAddress] ?: return
+        val amountFormat = srcToken.formatCoins(
+            Coin.toNano(srcAccount.balance.value, srcAccount.decimals)
+        )
+        prepareAndSubmitDataToUi(
+            state = state.copy(
+                srcTokenState = state.srcTokenState.copy(amountFormat = amountFormat)
+            ), sideEffects = setOf(SideEffect.UPDATE_SRC_TOKEN)
+        )
+        onSourceValueChanged(amountFormat.toString())
+    }
+
     private fun buildTokenState(token: SwapTokenEntity?): TokenState {
         return if (token == null) {
             TokenState(
@@ -167,12 +217,25 @@ class SwapAmountViewModel(
                 amountFormat = ""
             )
         } else {
+            val accountToken = tokensMap[token.contractAddress]
+            val balanceFormat = if (accountToken != null) {
+                val formattedValue = token.flexFormatCoins(
+                    Coin.toNano(
+                        accountToken.balance.value,
+                        accountToken.decimals
+                    )
+                )
+                l10n.getString(com.tonapps.wallet.localization.R.string.balance, formattedValue)
+            } else {
+                null
+            }
             TokenState(
                 selected = true,
                 displayName = token.displayName,
                 symbol = token.symbol,
                 address = token.contractAddress,
-                iconUri = token.iconUri
+                iconUri = token.iconUri,
+                balanceFormat = balanceFormat
             )
         }
     }
@@ -235,9 +298,10 @@ class SwapAmountViewModel(
         val offer = CurrencyFormatter.format(
             currency = " " + offerToken.symbol, value = 1f, decimals = 0
         )
-        val askDecimals = 0..askToken.decimals
         val ask = CurrencyFormatter.format(
-            currency = " " + askToken.symbol, value = swapInfo.swapRate, decimals = askDecimals
+            currency = " " + askToken.symbol,
+            value = swapInfo.swapRate,
+            decimals = askToken.getFlexDecimals(Coin.toNano(swapInfo.swapRate, askToken.decimals))
         )
         val priceImpact = CurrencyFormatter.format(
             currency = " %", value = swapInfo.priceImpact, decimals = 0..3
@@ -245,12 +309,12 @@ class SwapAmountViewModel(
         val minReceived = CurrencyFormatter.format(
             currency = " " + askToken.symbol,
             value = Coin.toCoins(swapInfo.minimumReceived, askToken.decimals),
-            decimals = askDecimals
+            decimals = askToken.getFlexDecimals(swapInfo.minimumReceived)
         )
         val providerFee = CurrencyFormatter.format(
             currency = " " + askToken.symbol,
             value = Coin.toCoins(swapInfo.liquidityFee, askToken.decimals),
-            decimals = askDecimals
+            decimals = askToken.getFlexDecimals(swapInfo.liquidityFee)
         )
 
         var newState = state.copy(
@@ -288,6 +352,23 @@ class SwapAmountViewModel(
             decimals = 0..decimals,
             group = false
         )
+    }
+
+    private fun SwapTokenEntity.flexFormatCoins(value: Long): CharSequence {
+        return CurrencyFormatter.format(
+            value = BigDecimal.valueOf(value).divide(BigDecimal.TEN.pow(decimals)),
+            decimals = getFlexDecimals(value),
+            group = false
+        )
+    }
+
+    private fun SwapTokenEntity.getFlexDecimals(value: Long): IntRange {
+        val oneCoinInNano = BigInteger.TEN.pow(decimals).toLong()
+        return if (value > oneCoinInNano) {
+            2..2
+        } else {
+            0..decimals
+        }
     }
 
     private fun prepareAndSubmitDataToUi(
