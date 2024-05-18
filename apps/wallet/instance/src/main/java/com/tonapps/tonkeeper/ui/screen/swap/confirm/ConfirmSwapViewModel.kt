@@ -104,20 +104,51 @@ class ConfirmSwapViewModel(
 
     fun onConfirmClicked() {
         val swapRequest = this.swapRequest ?: return
+        val srcToken = this.srcToken ?: return
+        val dstToken = this.dstToken ?: return
         val state = state as? ConfirmSwapScreenState.Data ?: return
-
+        prepareAndSubmitDataToUi(
+            state,
+            sideEffects = setOf(
+                SideEffect.ExecuteCommand(
+                    buildJsSwapCommand(
+                        swapRequest = swapRequest,
+                        srcToken = srcToken,
+                        dstToken = dstToken
+                    )
+                )
+            )
+        )
     }
 
     private fun buildJsSwapCommand(
         swapRequest: SwapRequestEntity,
-
+        srcToken: SwapTokenEntity,
+        dstToken: SwapTokenEntity,
     ): String {
-        val userWallet = "UQA3P-be0OWgRKUKa3ZPmEbjSD7f8v9qKmrGC5Ep6OIA5BpM"
-        val swapAmount = "10000000"
-        val askWallet = "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
-        val minAskAmount = "1"
+        return when {
+            srcToken.isTon -> buildTonToJettonSwapCommand(swapRequest)
+            dstToken.isTon -> buildJettonToTonSwapCommand(swapRequest)
+            else -> buildJettonToJettonSwapCommand(swapRequest)
+        }
+    }
 
-        return "swapTonToJetton('$userWallet', '$swapAmount', '$askWallet', '$minAskAmount')"
+    private fun buildTonToJettonSwapCommand(
+        swapRequest: SwapRequestEntity
+    ): String {
+        return "swapTonToJetton('${swapRequest.walletAddress}', '${swapRequest.srcAmount}', '${swapRequest.toTokenAddress}', '${swapRequest.minAmount}')"
+    }
+
+    private fun buildJettonToTonSwapCommand(
+        swapRequest: SwapRequestEntity
+    ): String {
+        return "swapJettonToTon('${swapRequest.walletAddress}', '${swapRequest.srcAmount}', '${swapRequest.fromTokenAddress}', '${swapRequest.minAmount}')"
+    }
+
+    private fun buildJettonToJettonSwapCommand(
+        swapRequest: SwapRequestEntity
+    ): String {
+        return "swapJettonToJetton('${swapRequest.walletAddress}', '${swapRequest.fromTokenAddress}', '${swapRequest.srcAmount}', '${swapRequest.toTokenAddress}', '${swapRequest.minAmount}')"
     }
 
     private fun prepareAndSubmitDataToUi(state: ConfirmSwapScreenState) {
