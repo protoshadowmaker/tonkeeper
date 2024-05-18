@@ -6,9 +6,11 @@ import com.tonapps.blockchain.Coin
 import com.tonapps.blockchain.ton.extensions.toUserFriendly
 import com.tonapps.icu.CurrencyFormatter
 import com.tonapps.wallet.data.account.WalletRepository
+import com.tonapps.wallet.data.account.entities.WalletEntity
 import com.tonapps.wallet.data.settings.SettingsRepository
 import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
+import com.tonapps.wallet.data.swap.entity.SwapRequestEntity
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
 import com.tonapps.wallet.data.token.TokenRepository
 import com.tonapps.wallet.data.token.entities.AccountTokenEntity
@@ -33,12 +35,15 @@ class SwapAmountViewModel(
     private val swapRepository: SwapRepository
 ) : ViewModel() {
 
+    private var activeWallet: WalletEntity? = null
     private var tokensMap: Map<String, AccountTokenEntity> = emptyMap()
     private var srcToken: SwapTokenEntity? = SwapTokenEntity.TON
     private var dstToken: SwapTokenEntity? = null
     private var srcAmount: Long = 0
     private var dstAmount: Long = 0
+    private var minAmount: Long = 0
     private var reverse: Boolean = false
+    private var slippageTolerance: Float = 0.001f //0.1%
 
     private var swapRateJob: Job? = null
 
@@ -56,6 +61,7 @@ class SwapAmountViewModel(
             walletRepository.activeWalletFlow,
             settings.currencyFlow
         ) { wallet, currency ->
+            activeWallet = wallet
             tokensMap = tokenRepository
                 .getLocal(currency, wallet.accountId, wallet.testnet)
                 .associateBy {
@@ -75,6 +81,22 @@ class SwapAmountViewModel(
                 )
             )
         }.launchIn(viewModelScope)
+    }
+
+    fun buildSwapRequest(): SwapRequestEntity? {
+        val wallet = activeWallet ?: return null
+        val from = srcToken?.contractAddress ?: return null
+        val to = dstToken?.contractAddress ?: return null
+        return SwapRequestEntity(
+            walletAddress = wallet.address.toUserFriendly(testnet = wallet.testnet),
+            fromTokenAddress = from,
+            toTokenAddress = to,
+            srcAmount = srcAmount,
+            dstAmount = dstAmount,
+            minAmount = minAmount,
+            reverse = reverse,
+            slippageTolerance = slippageTolerance
+        )
     }
 
     fun onSourceChanged(contractAddress: String) {
@@ -231,7 +253,6 @@ class SwapAmountViewModel(
             }
             TokenState(
                 selected = true,
-                displayName = token.displayName,
                 symbol = token.symbol,
                 address = token.contractAddress,
                 iconUri = token.iconUri,
@@ -241,8 +262,15 @@ class SwapAmountViewModel(
     }
 
     private fun buildActionState(swapInfoState: SwapInfoState?): SwapActionState {
+        val srcAccountToken: AccountTokenEntity? = srcToken?.let { tokensMap[it.contractAddress] }
+        val srcAccountBalance = if (srcAccountToken == null) {
+            0
+        } else {
+            Coin.toNano(srcAccountToken.balance.value, srcAccountToken.decimals)
+        }
         return when {
             srcAmount == 0L && dstAmount == 0L -> SwapActionState.ENTER_AMOUNT
+            srcAmount > srcAccountBalance -> SwapActionState.NOT_ENOUGH_TOKENS
             srcToken == null || dstToken == null -> SwapActionState.CHOOSE_TOKEN
             swapInfoState == null -> SwapActionState.PROGRESS
             else -> SwapActionState.CONTINUE
@@ -263,14 +291,14 @@ class SwapAmountViewModel(
                     offerAddress = offerToken.contractAddress,
                     askAddress = askToken.contractAddress,
                     units = dstAmount,
-                    slippageTolerance = 0.001f
+                    slippageTolerance = slippageTolerance
                 )
             } else {
                 swapRepository.getSwapInfo(
                     offerAddress = offerToken.contractAddress,
                     askAddress = askToken.contractAddress,
                     units = srcAmount,
-                    slippageTolerance = 0.001f
+                    slippageTolerance = slippageTolerance
                 )
             }.getOrNull()
             if (swapInfo != null) {
@@ -292,6 +320,7 @@ class SwapAmountViewModel(
         reverse: Boolean,
         swapInfo: SwapInfoEntity
     ) {
+        minAmount = swapInfo.minimumReceived
         val state = this.state
         val minFee = CurrencyFormatter.format(value = 0.08f, decimals = 2)
         val maxFee = CurrencyFormatter.format(value = 0.25f, decimals = 2)

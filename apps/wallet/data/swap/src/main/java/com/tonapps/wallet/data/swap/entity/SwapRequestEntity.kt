@@ -6,8 +6,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class SwapRequestEntity(
     val walletAddress: String,
-    val fromToken: SwapTokenEntity,
-    val toToken: SwapTokenEntity,
-    val amount: Long,
-    val amountToken: SwapTokenEntity
+    val fromTokenAddress: String,
+    val toTokenAddress: String,
+    val srcAmount: Long,
+    val dstAmount: Long,
+    val minAmount: Long,
+    val reverse: Boolean,
+    val slippageTolerance: Float
 ) : Parcelable

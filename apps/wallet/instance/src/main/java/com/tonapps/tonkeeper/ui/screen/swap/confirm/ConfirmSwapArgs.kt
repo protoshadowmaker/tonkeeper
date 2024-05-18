@@ -1,38 +1,40 @@
 package com.tonapps.tonkeeper.ui.screen.swap.confirm
 
 import android.os.Bundle
-import com.tonapps.extensions.requireString
+import android.os.Parcelable
+import com.tonapps.extensions.requireParcelableCompat
+import com.tonapps.wallet.data.swap.entity.SwapRequestEntity
+import kotlinx.parcelize.Parcelize
 import uikit.base.BaseArgs
 
 data class ConfirmSwapArgs(
-    val walletAddress: String,
-    val fromToken: String,
-    val toToken: String,
-    val amount: Long,
-    val amountToken: String
+    val swapRequest: SwapRequestEntity,
+    val initialState: InitialState,
 ) : BaseArgs() {
 
     private companion object {
-        private const val WALLET_ADDRESS = "wallet"
-        private const val FROM_TOKEN = "from"
-        private const val TO_TOKEN = "to"
-        private const val AMOUNT = "amount"
-        private const val AMOUNT_TOKEN = "amountToken"
+        private const val REQUEST = "request"
+        private const val INITIAL_STATE = "initialState"
     }
 
     constructor(bundle: Bundle) : this(
-        walletAddress = bundle.requireString(WALLET_ADDRESS),
-        fromToken = bundle.requireString(FROM_TOKEN),
-        toToken = bundle.requireString(TO_TOKEN),
-        amount = bundle.getLong(AMOUNT),
-        amountToken = bundle.requireString(AMOUNT_TOKEN),
+        swapRequest = bundle.requireParcelableCompat(REQUEST),
+        initialState = bundle.requireParcelableCompat(INITIAL_STATE),
     )
 
     override fun toBundle(): Bundle = Bundle().apply {
-        putString(WALLET_ADDRESS, walletAddress)
-        putString(FROM_TOKEN, fromToken)
-        putString(TO_TOKEN, toToken)
-        putLong(AMOUNT, amount)
-        putString(AMOUNT_TOKEN, amountToken)
+        putParcelable(REQUEST, swapRequest)
+        putParcelable(INITIAL_STATE, initialState)
     }
+
+    @Parcelize
+    data class InitialState(
+        val swapRate: CharSequence,
+        val priceImpact: CharSequence,
+        val minimumReceived: CharSequence,
+        val providerFee: CharSequence,
+        val blockchainFee: CharSequence,
+        val route: CharSequence,
+        val provider: CharSequence,
+    ) : Parcelable
 }

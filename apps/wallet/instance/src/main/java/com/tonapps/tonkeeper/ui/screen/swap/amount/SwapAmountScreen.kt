@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.tonapps.blockchain.Coin
 import com.tonapps.tonkeeper.extensions.toast
 import com.tonapps.tonkeeper.fragment.send.view.AmountInput
+import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapArgs
 import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapScreen
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenScreen
 import com.tonapps.tonkeeper.ui.screen.swap.settings.SwapSettingsScreen
@@ -104,7 +105,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         srcValueInput.addTextChangedListener(srcTextChangeListener)
         dstValueInput.addTextChangedListener(dstTextChangeListener)
         continueAction.setOnClickListener {
-            navigation?.add(ConfirmSwapScreen.newInstance())
+            onContinueClicked()
         }
         swapTokens.setOnClickListener {
             viewModel.onSwapTokensClicked()
@@ -127,6 +128,27 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         }
     }
 
+    private fun onContinueClicked() {
+        val swapRequest = viewModel.buildSwapRequest() ?: return
+        val swapInfoState = viewModel.state.swapInfoState ?: return
+        navigation?.add(
+            ConfirmSwapScreen.newInstance(
+                ConfirmSwapArgs(
+                    swapRequest = swapRequest,
+                    initialState = ConfirmSwapArgs.InitialState(
+                        swapRate = swapInfoState.swapRate,
+                        priceImpact = swapInfoState.priceImpact,
+                        minimumReceived = swapInfoState.minimumReceived,
+                        providerFee = swapInfoState.providerFee,
+                        blockchainFee = swapInfoState.blockchainFee,
+                        route = swapInfoState.route,
+                        provider = swapInfoState.provider
+                    )
+                )
+            )
+        )
+    }
+
     private fun onStateChanged(state: SwapAmountScreenState) {
         onSrcTokenStateChanged(
             state.srcTokenState,
@@ -137,13 +159,13 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             state.sideEffects.contains(SideEffect.UPDATE_DST_TOKEN)
         )
         onSwapInfoStateChanged(state.swapInfoState)
-        onActionStateChanged(state.swapActionState)
+        onActionStateChanged(state.swapActionState, state.srcTokenState.symbol)
 
         srcTokenContainer.setOnClickListener {
             navigation?.add(
                 SearchSwapTokenScreen.newInstance(
                     request = SRC_TOKEN_REQUEST_KEY,
-                    selectedAddress = state.srcTokenState.address
+                    selectedAddress = state.srcTokenState.address.toString()
                 )
             )
         }
@@ -151,8 +173,8 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             navigation?.add(
                 SearchSwapTokenScreen.newInstance(
                     DST_TOKEN_REQUEST_KEY,
-                    selectedAddress = state.dstTokenState.address,
-                    excludedAddress = state.srcTokenState.address
+                    selectedAddress = state.dstTokenState.address.toString(),
+                    excludedAddress = state.srcTokenState.address.toString()
                 )
             )
         }
@@ -230,7 +252,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         }
     }
 
-    private fun onActionStateChanged(state: SwapActionState) {
+    private fun onActionStateChanged(state: SwapActionState, srcTokenSymbol: CharSequence?) {
         action.gone()
         actionLoader.gone()
         continueAction.gone()
@@ -248,6 +270,14 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             SwapActionState.PROGRESS -> actionLoader.visible()
 
             SwapActionState.CONTINUE -> continueAction.visible()
+
+            SwapActionState.NOT_ENOUGH_TOKENS -> {
+                action.visible()
+                action.text = getString(
+                    com.tonapps.wallet.localization.R.string.insufficient_balance_buy,
+                    srcTokenSymbol
+                )
+            }
         }
     }
 
