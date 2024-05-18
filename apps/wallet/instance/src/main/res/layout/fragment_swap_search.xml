@@ -6,12 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <uikit.widget.HeaderView
+    <uikit.widget.ModalHeader
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:action="@drawable/ic_close_16"
-        android:title="@string/choose_token"
+        android:text="@string/choose_token"
         app:ignoreSystemOffset="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

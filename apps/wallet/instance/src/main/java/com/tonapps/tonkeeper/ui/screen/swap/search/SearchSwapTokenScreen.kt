@@ -11,7 +11,7 @@ import uikit.extensions.applyBottomNavigationInsets
 import uikit.extensions.collectFlow
 import uikit.extensions.hideKeyboard
 import uikit.navigation.Navigation.Companion.navigation
-import uikit.widget.HeaderView
+import uikit.widget.ModalHeader
 import uikit.widget.SearchInput
 import uikit.widget.SimpleRecyclerView
 
@@ -34,7 +34,7 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
     private lateinit var listView: SimpleRecyclerView
     private lateinit var root: View
     private lateinit var closeButton: Button
-    private lateinit var header: HeaderView
+    private lateinit var header: ModalHeader
     private lateinit var searchInput: SearchInput
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,10 +46,9 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
         searchInput = view.findViewById(R.id.search)
 
         listView.adapter = adapter
-        header.startGravity()
         root.applyBottomNavigationInsets()
 
-        header.doOnActionClick = {
+        header.onCloseClick = {
             finish()
         }
         closeButton.setOnClickListener {

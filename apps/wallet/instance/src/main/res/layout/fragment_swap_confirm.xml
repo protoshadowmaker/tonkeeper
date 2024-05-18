@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swapTokensRoot"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/confirmSwapRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,32 +11,345 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <uikit.widget.HeaderView
+    <uikit.widget.ModalHeader
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:action="@drawable/ic_close_16"
-        android:title="@string/confirm_swap_capital"
+        android:text="@string/confirm_swap_capital"
         app:ignoreSystemOffset="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/action"
-        style="@style/Widget.App.Button.Secondary"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonsContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/srcInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/offsetMedium"
+                android:background="@drawable/bg_content"
+                android:paddingHorizontal="@dimen/offsetMedium"
+                android:paddingBottom="@dimen/offsetMedium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/captionSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/offsetMedium"
+                    android:paddingBottom="@dimen/offsetSmall"
+                    android:text="@string/send"
+                    android:textAppearance="@style/TextAppearance.Body2"
+                    android:textColor="?attr/textSecondaryColor"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/srcBalance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingStart="@dimen/offsetSmall"
+                    android:paddingTop="@dimen/offsetMedium"
+                    android:paddingEnd="0dp"
+                    android:paddingBottom="@dimen/offsetSmall"
+                    android:textAppearance="@style/TextAppearance.Body2"
+                    android:textColor="?attr/textSecondaryColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/captionSend"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="$ 6,010.01" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/srcHeaderBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:barrierMargin="@dimen/offsetSmall"
+                    app:constraint_referenced_ids="captionSend,srcBalance" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/srcValue"
+                    android:layout_width="0dp"
+                    android:layout_height="48.76dp"
+                    android:layout_marginStart="@dimen/offsetSmall"
+                    android:background="@null"
+                    android:fontFamily="@font/montserrat_semi_bold"
+                    android:gravity="center_vertical|end"
+                    android:singleLine="true"
+                    android:textColor="?attr/textPrimaryColor"
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:textSize="40sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/srcTokenContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier"
+                    tools:text="14,787.32" />
+
+                <uikit.widget.RowLayout
+                    android:id="@+id/srcTokenContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_button_tertiary"
+                    android:padding="@dimen/offsetExtraSmall"
+                    app:layout_constraintBottom_toBottomOf="@id/srcValue"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/srcValue">
+
+                    <uikit.widget.FrescoView
+                        android:id="@+id/srcTokenIcon"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_oval"
+                        android:backgroundTint="?attr/backgroundHighlightedColor"
+                        app:roundAsCircle="true" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/srcToken"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingHorizontal="6dp"
+                        android:textAppearance="@style/TextAppearance.Label1"
+                        android:textColor="?attr/buttonTertiaryForegroundColor"
+                        tools:text="TON" />
+                </uikit.widget.RowLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <uikit.widget.ColumnLayout
+                android:id="@+id/dstInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/offsetMedium"
+                android:layout_marginTop="@dimen/offsetSmall"
+                android:background="@drawable/bg_content"
+                android:paddingTop="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/srcInput">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/offsetMedium"
+                    android:paddingBottom="@dimen/offsetMedium">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/captionReceive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/offsetMedium"
+                        android:paddingBottom="@dimen/offsetSmall"
+                        android:text="@string/receive"
+                        android:textAppearance="@style/TextAppearance.Body2"
+                        android:textColor="?attr/textSecondaryColor"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/dstBalance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:paddingStart="@dimen/offsetSmall"
+                        android:paddingTop="@dimen/offsetMedium"
+                        android:paddingEnd="0dp"
+                        android:paddingBottom="@dimen/offsetSmall"
+                        android:textAppearance="@style/TextAppearance.Body2"
+                        android:textColor="?attr/textSecondaryColor"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/captionReceive"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="$ 6,010.01" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/dstHeaderBarrier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:barrierMargin="@dimen/offsetSmall"
+                        app:constraint_referenced_ids="captionReceive,dstBalance" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/dstValue"
+                        android:layout_width="0dp"
+                        android:layout_height="48.76dp"
+                        android:layout_marginStart="@dimen/offsetSmall"
+                        android:background="@null"
+                        android:fontFamily="@font/montserrat_semi_bold"
+                        android:gravity="center_vertical|end"
+                        android:singleLine="true"
+                        android:textColor="?attr/textPrimaryColor"
+                        android:textCursorDrawable="@drawable/cursor"
+                        android:textSize="40sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/dstTokenContainer"
+                        app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier"
+                        tools:text="6,010.01" />
+
+                    <uikit.widget.RowLayout
+                        android:id="@+id/dstTokenContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_button_tertiary"
+                        android:padding="@dimen/offsetExtraSmall"
+                        app:layout_constraintBottom_toBottomOf="@id/dstValue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/dstValue">
+
+                        <uikit.widget.FrescoView
+                            android:id="@+id/dstTokenIcon"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_oval"
+                            android:backgroundTint="?attr/backgroundHighlightedColor"
+                            app:roundAsCircle="true" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/dstToken"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_button_tertiary"
+                            android:drawablePadding="6dp"
+                            android:gravity="center"
+                            android:paddingHorizontal="6dp"
+                            android:textAppearance="@style/TextAppearance.Label1"
+                            android:textColor="?attr/buttonTertiaryForegroundColor"
+                            app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier"
+                            tools:text="TON" />
+                    </uikit.widget.RowLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <uikit.widget.ColumnLayout
+                    android:id="@+id/swapInfoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                        android:id="@+id/priceImpact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/offsetSmall"
+                        android:icon="@drawable/ic_information_circle_16"
+                        android:minHeight="@dimen/lineInfoCompactHeight"
+                        android:title="@string/price_impact" />
+
+                    <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                        android:id="@+id/minimumReceived"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_information_circle_16"
+                        android:minHeight="@dimen/lineInfoCompactHeight"
+                        android:title="@string/minimum_received" />
+
+                    <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                        android:id="@+id/providerFee"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_information_circle_16"
+                        android:minHeight="@dimen/lineInfoCompactHeight"
+                        android:title="@string/liquidity_provider_fee" />
+
+                    <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                        android:id="@+id/blockchainFee"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/lineInfoCompactHeight"
+                        android:title="@string/blockchain_fee" />
+
+                    <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                        android:id="@+id/route"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/lineInfoCompactHeight"
+                        android:title="@string/route" />
+
+                    <com.tonapps.tonkeeper.view.LineInfoSimpleView
+                        android:id="@+id/provider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/offsetSmall"
+                        android:minHeight="@dimen/lineInfoCompactHeight"
+                        android:title="@string/provider" />
+
+                </uikit.widget.ColumnLayout>
+
+            </uikit.widget.ColumnLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <uikit.widget.RowLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/offsetMedium"
-        android:layout_marginTop="@dimen/offsetLarge"
-        android:layout_marginBottom="@dimen/offsetMedium"
-        android:text="@string/enter_amount"
-        android:textAppearance="@style/TextAppearance.Label1"
+        android:padding="@dimen/offsetMedium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/cancel"
+            style="@style/Widget.App.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/offsetMedium"
+            android:layout_marginEnd="@dimen/offsetSmall"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textAppearance="@style/TextAppearance.Label1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/offsetSmall"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/confirm"
+                style="@style/Widget.App.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/confirm"
+                android:textAppearance="@style/TextAppearance.Label1" />
+
+            <uikit.widget.LoaderView
+                android:id="@+id/loader"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:color="?attr/buttonPrimaryForegroundColor"
+                android:visibility="gone" />
+        </FrameLayout>
+    </uikit.widget.RowLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

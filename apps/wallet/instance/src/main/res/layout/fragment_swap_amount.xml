@@ -263,7 +263,8 @@
                 android:id="@+id/rate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/lineInfoHeight" />
+                android:minHeight="@dimen/lineInfoHeight"
+                tools:title="1 TON ≈ 6.01 USD₮" />
 
             <com.tonapps.tonkeeper.view.LineInfoSimpleView
                 android:id="@+id/priceImpact"

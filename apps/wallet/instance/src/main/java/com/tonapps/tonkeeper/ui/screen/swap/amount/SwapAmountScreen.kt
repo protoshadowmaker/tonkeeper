@@ -1,5 +1,7 @@
 package com.tonapps.tonkeeper.ui.screen.swap.amount
 
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -14,6 +16,8 @@ import com.tonapps.tonkeeper.view.LineInfoSimpleView
 import com.tonapps.tonkeeperx.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
+import uikit.drawable.FooterDrawable
+import uikit.drawable.HeaderDrawable
 import uikit.extensions.collectFlow
 import uikit.extensions.gone
 import uikit.extensions.invisible
@@ -54,6 +58,15 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private val continueAction: Button by lazy { requireView().findViewById(R.id.continueAction) }
     private val actionLoader: View by lazy { requireView().findViewById(R.id.actionLoader) }
 
+    private val rateDrawable: Drawable by lazy {
+        LayerDrawable(
+            arrayOf(
+                HeaderDrawable(requireContext()).apply { setDivider(true) },
+                FooterDrawable(requireContext()).apply { setDivider(true) }
+            )
+        )
+    }
+
     private val srcTextChangeListener: ToggleableTextWatcher =
         ToggleableTextWatcher(onTextChanged = { _, _, _, _ ->
             viewModel.onSourceValueChanged(srcValueInput.getValue())
@@ -81,6 +94,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        rate.foreground = rateDrawable
         headerView.doOnActionClick = {
             finish()
         }
@@ -124,6 +138,24 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         )
         onSwapInfoStateChanged(state.swapInfoState)
         onActionStateChanged(state.swapActionState)
+
+        srcTokenContainer.setOnClickListener {
+            navigation?.add(
+                SearchSwapTokenScreen.newInstance(
+                    request = SRC_TOKEN_REQUEST_KEY,
+                    selectedAddress = state.srcTokenState.address
+                )
+            )
+        }
+        dstTokenContainer.setOnClickListener {
+            navigation?.add(
+                SearchSwapTokenScreen.newInstance(
+                    DST_TOKEN_REQUEST_KEY,
+                    selectedAddress = state.dstTokenState.address,
+                    excludedAddress = state.srcTokenState.address
+                )
+            )
+        }
     }
 
     private fun onSrcTokenStateChanged(state: TokenState, updateValue: Boolean) {
@@ -149,15 +181,6 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
                 srcValueInput.setTextKeepState(state.amountFormat)
             }
         }
-
-        srcTokenContainer.setOnClickListener {
-            navigation?.add(
-                SearchSwapTokenScreen.newInstance(
-                    request = SRC_TOKEN_REQUEST_KEY,
-                    selectedAddress = state.address
-                )
-            )
-        }
     }
 
     private fun onDstTokenStateChanged(state: TokenState, updateValue: Boolean) {
@@ -180,16 +203,6 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
             dstTextChangeListener.ignore {
                 dstValueInput.setTextKeepState(state.amountFormat)
             }
-        }
-
-        dstTokenContainer.setOnClickListener {
-            navigation?.add(
-                SearchSwapTokenScreen.newInstance(
-                    DST_TOKEN_REQUEST_KEY,
-                    selectedAddress = state.address,
-                    excludedAddress = state.address
-                )
-            )
         }
     }
 

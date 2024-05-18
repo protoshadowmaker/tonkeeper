@@ -1,8 +1,9 @@
-function swapTonToJetton(userWalletAddress, offerAmount, askJettonAddress) {
+function swapTonToJetton(userWalletAddress, offerAmount, askJettonAddress, minAskAmount) {
     window.tonToJetton(
         userWalletAddress,
         offerAmount,
         askJettonAddress,
+        minAskAmount,
         (result) => {
             ReactNativeWebView.postMessage(JSON.stringify({
                 type: 'invokeRnFunc',
@@ -16,11 +17,12 @@ function swapTonToJetton(userWalletAddress, offerAmount, askJettonAddress) {
     )
 }
 
-function swapJettonToTon(userWalletAddress, offerAmount, offerJettonAddress) {
+function swapJettonToTon(userWalletAddress, offerAmount, offerJettonAddress, minAskAmount) {
     window.jettonToTon(
         userWalletAddress,
         offerAmount,
         offerJettonAddress,
+        minAskAmount,
         (result) => {
             ReactNativeWebView.postMessage(JSON.stringify({
                 type: 'invokeRnFunc',

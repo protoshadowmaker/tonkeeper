@@ -5,17 +5,16 @@ import android.view.View
 import android.widget.Button
 import com.tonapps.tonkeeperx.R
 import uikit.base.BaseFragment
-import uikit.widget.HeaderView
+import uikit.widget.ModalHeader
 
 class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFragment.BottomSheet {
 
-    private val headerView: HeaderView by lazy { requireView().findViewById(R.id.header) }
+    private val headerView: ModalHeader by lazy { requireView().findViewById(R.id.header) }
     private val saveButton: Button by lazy { requireView().findViewById(R.id.saveButton) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        headerView.startGravity()
-        headerView.doOnActionClick = {
+        headerView.onCloseClick = {
             finish()
         }
         saveButton.setOnClickListener {
