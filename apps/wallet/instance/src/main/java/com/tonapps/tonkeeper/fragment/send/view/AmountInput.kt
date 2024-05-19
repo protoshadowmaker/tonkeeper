@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.tonapps.blockchain.Coin
 import com.tonapps.icu.CurrencyFormatter
 import uikit.extensions.dp
+import uikit.extensions.useAttributes
 
 class AmountInput @JvmOverloads constructor(
     context: Context,
@@ -40,7 +41,12 @@ class AmountInput @JvmOverloads constructor(
         filters = arrayOf(InputFilter.LengthFilter(21))
         applyTextSize(maxTextSize)
         addTextChangedListener(this)
-        gravity = Gravity.CENTER
+        context.useAttributes(attrs, com.tonapps.tonkeeperx.R.styleable.AmountInput) {
+            gravity = it.getInt(
+                com.tonapps.tonkeeperx.R.styleable.AmountInput_android_gravity,
+                Gravity.CENTER
+            )
+        }
     }
 
     private fun resizeText() {
