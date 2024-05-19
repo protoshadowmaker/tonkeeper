@@ -35,6 +35,8 @@ class SettingsRepository(
         private const val INSTALL_ID_KEY = "install_id"
         private const val SEARCH_ENGINE_KEY = "search_engine"
         private const val PUSH_WALLET_PREFIX = "push_wallet_"
+        private const val SLIPPAGE_VALUE = "slippage_value"
+        private const val SLIPPAGE_EXPERT = "slippage_expert"
     }
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -62,6 +64,12 @@ class SettingsRepository(
 
     private val _walletPush = MutableStateFlow<Map<Long, Boolean>?>(null)
     val walletPush = _walletPush.stateIn(scope, SharingStarted.Eagerly, null).filterNotNull()
+
+    private val _slippageValueFlow = MutableEffectFlow<Float>()
+    val slippageValueFlow = _slippageValueFlow.stateIn(scope, SharingStarted.Eagerly, null).filterNotNull()
+
+    private val _slippageExpertFlow = MutableEffectFlow<Boolean>()
+    val slippageExpertFlow = _slippageExpertFlow.stateIn(scope, SharingStarted.Eagerly, null).filterNotNull()
 
     private val prefs = context.getSharedPreferences(NAME, Context.MODE_PRIVATE)
 
@@ -151,6 +159,24 @@ class SettingsRepository(
             }
         }
 
+    var slippageValue: Float = prefs.getFloat(SLIPPAGE_VALUE, 1f)
+        set(value) {
+            if (value != field) {
+                prefs.edit().putFloat(SLIPPAGE_VALUE, value).apply()
+                field = value
+                _slippageValueFlow.tryEmit(value)
+            }
+        }
+
+    var slippageExpert: Boolean = prefs.getBoolean(SLIPPAGE_EXPERT, false)
+        set(value) {
+            if (value != field) {
+                prefs.edit().putBoolean(SLIPPAGE_EXPERT, value).apply()
+                field = value
+                _slippageExpertFlow.tryEmit(value)
+            }
+        }
+
     private fun pushWalletKey(walletId: Long) = "$PUSH_WALLET_PREFIX$walletId"
 
     fun getPushWallet(walletId: Long): Boolean = prefs.getBoolean(pushWalletKey(walletId), false)
@@ -173,6 +199,8 @@ class SettingsRepository(
             _countryFlow.tryEmit(country)
             _searchEngineFlow.tryEmit(searchEngine)
             _walletPush.tryEmit(mapOf())
+            _slippageValueFlow.tryEmit(slippageValue)
+            _slippageExpertFlow.tryEmit(slippageExpert)
         }
     }
 }

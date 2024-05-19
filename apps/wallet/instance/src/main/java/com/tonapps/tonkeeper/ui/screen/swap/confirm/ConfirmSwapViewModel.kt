@@ -8,12 +8,15 @@ import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
 import com.tonapps.wallet.data.swap.entity.SwapRequestEntity
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlin.time.Duration.Companion.seconds
 
 class ConfirmSwapViewModel(
     private val swapRepository: SwapRepository
@@ -22,6 +25,8 @@ class ConfirmSwapViewModel(
     private var swapRequest: SwapRequestEntity? = null
     private var srcToken: SwapTokenEntity? = null
     private var dstToken: SwapTokenEntity? = null
+
+    private var swapRateJob: Job? = null
 
     private val _uiStateFlow: MutableStateFlow<ConfirmSwapScreenState> = MutableStateFlow(
         ConfirmSwapScreenState.Init
@@ -43,6 +48,7 @@ class ConfirmSwapViewModel(
                     confirmSwapInfoState = initialState
                 )
             )
+            loadSwapRate()
         }
     }
 
@@ -108,7 +114,7 @@ class ConfirmSwapViewModel(
         val dstToken = this.dstToken ?: return
         val state = state as? ConfirmSwapScreenState.Data ?: return
         prepareAndSubmitDataToUi(
-            state,
+            state.copy(processState = ProcessState.PROCESSING),
             sideEffects = setOf(
                 SideEffect.ExecuteCommand(
                     buildJsSwapCommand(
@@ -119,6 +125,11 @@ class ConfirmSwapViewModel(
                 )
             )
         )
+    }
+
+    fun onSignCanceled() {
+        val state = state as? ConfirmSwapScreenState.Data ?: return
+        prepareAndSubmitDataToUi(state.copy(processState = ProcessState.IDLE))
     }
 
     private fun buildJsSwapCommand(
@@ -151,8 +162,53 @@ class ConfirmSwapViewModel(
         return "swapJettonToJetton('${swapRequest.walletAddress}', '${swapRequest.fromTokenAddress}', '${swapRequest.srcAmount}', '${swapRequest.toTokenAddress}', '${swapRequest.minAmount}')"
     }
 
-    private fun prepareAndSubmitDataToUi(state: ConfirmSwapScreenState) {
-        submitDataToUi(state)
+    private fun loadSwapRate() {
+        swapRateJob?.cancel()
+        val swapRequest = this.swapRequest ?: return
+
+        swapRateJob = viewModelScope.launch {
+            val swapInfo = if (swapRequest.reverse) {
+                swapRepository.getReverseSwapInfo(
+                    offerAddress = swapRequest.fromTokenAddress,
+                    askAddress = swapRequest.toTokenAddress,
+                    units = swapRequest.dstAmount,
+                    slippageTolerance = swapRequest.slippageTolerance
+                )
+            } else {
+                swapRepository.getSwapInfo(
+                    offerAddress = swapRequest.fromTokenAddress,
+                    askAddress = swapRequest.toTokenAddress,
+                    units = swapRequest.srcAmount,
+                    slippageTolerance = swapRequest.slippageTolerance
+                )
+            }.getOrNull()
+            if (swapInfo != null) {
+                onSwapInfoLoaded(swapRequest, swapInfo)
+            }
+            delay(5.seconds)
+            loadSwapRate()
+        }
+    }
+
+    private fun onSwapInfoLoaded(swapRequest: SwapRequestEntity, swapInfo: SwapInfoEntity) {
+        this.swapRequest = swapRequest.copy(
+            srcAmount = swapInfo.offerValue,
+            dstAmount = swapInfo.askValue,
+            minAmount = swapInfo.minimumReceived
+        )
+        val state = state as? ConfirmSwapScreenState.Data ?: return
+        val offerToken = srcToken ?: return
+        val askToken = dstToken ?: return
+        prepareAndSubmitDataToUi(
+            buildConfirmSwapScreenState(
+                state.processState,
+                buildConfirmSwapInfoState(
+                    offerToken = offerToken,
+                    askToken = askToken,
+                    swapInfo = swapInfo
+                )
+            )
+        )
     }
 
     private fun SwapTokenEntity.formatCoins(value: Long): CharSequence {
@@ -178,6 +234,10 @@ class ConfirmSwapViewModel(
         } else {
             0..decimals
         }
+    }
+
+    private fun prepareAndSubmitDataToUi(state: ConfirmSwapScreenState) {
+        submitDataToUi(state)
     }
 
     private fun prepareAndSubmitDataToUi(

@@ -39,6 +39,7 @@ import com.tonapps.tonkeeper.ui.screen.token.TokenViewModel
 import com.tonapps.tonkeeper.ui.screen.swap.amount.SwapAmountViewModel
 import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapViewModel
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenViewModel
+import com.tonapps.tonkeeper.ui.screen.swap.settings.SwapSettingsViewModel
 import com.tonapps.tonkeeper.ui.screen.wallet.WalletViewModel
 import com.tonapps.tonkeeper.ui.screen.wallet.list.WalletAdapter
 import com.tonapps.wallet.data.settings.SettingsRepository
@@ -89,10 +90,11 @@ val koinModel = module {
     viewModel { EncryptedCommentViewModel(get(), get()) }
     viewModel { NotificationsViewModel(get(), get(), get()) }
     viewModel { parameters -> TokenViewModel(get(), tokenAddress = parameters.get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { DAppViewModel(get(), get()) }
+    viewModel { DAppViewModel(get(), get(), get()) }
     viewModel { SearchSwapTokenViewModel(get(), get()) }
     viewModel { SwapAmountViewModel(get(), get(), get(), get(), get()) }
     viewModel { ConfirmSwapViewModel(get()) }
+    viewModel { SwapSettingsViewModel(get()) }
 
     viewModel { ConfirmScreenFeature(get(), get(), get(), get(), get()) }
     viewModel { AmountScreenFeature(get(), get(), get()) }

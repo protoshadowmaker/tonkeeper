@@ -310,4 +310,9 @@
     <string name="minimum_received_info">Ваша сделка вернется назад, если до ее подтверждения произойдет сильное, неблагоприятное движение цены.</string>
     <string name="liquidity_provider_fee_info">Часть каждой сделки идет поставщикам ликвидности в качестве поощрения по протоколу.</string>
     <string name="insufficient_balance_buy">Недостаточно средств. Купить %1$s</string>
+    <string name="slippage">Погрешность</string>
+    <string name="slippage_description">Величина, на которую цена может измениться в невыгодном направлении, прежде чем сделка будет отменена</string>
+    <string name="slippage_hint">Пользовательский %</string>
+    <string name="expert_mode">Экспертный режим</string>
+    <string name="expert_mode_description">Позволяет совершать сделки с высокой погрешностью. Используйте на свой страх и риск.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.tonapps.tonkeeper.ui.screen.swap.confirm
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -51,7 +52,7 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
     private val root: View by lazy { requireView().findViewById(R.id.confirmSwapRoot) }
     private val cancel: Button by lazy { requireView().findViewById(R.id.cancel) }
     private val confirm: Button by lazy { requireView().findViewById(R.id.confirm) }
-    private val loader: LoaderView by lazy { requireView().findViewById(R.id.loader) }
+    private val loader: LoaderView by lazy { requireView().findViewById(R.id.confirmLoader) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,7 +60,10 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         headerView.onCloseClick = ::finish
         cancel.setOnClickListener { finish() }
         webView.loadUrl("file:///android_asset/swap/index.html")
-        webView.jsBridge = ConfirmSwapBridge(sendTransaction = ::sing)
+        webView.jsBridge = ConfirmSwapBridge(
+            sendTransaction = ::sing,
+            sendTransactionErrorCallback = ::onSignCancelled
+        )
         confirm.setOnClickListener { viewModel.onConfirmClicked() }
         priceImpact.setOnClickListener {
             navigation?.toast(getString(com.tonapps.wallet.localization.R.string.price_impact_info))
@@ -161,6 +165,10 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         request: SignRequestEntity
     ): String {
         return rootViewModel.requestSign(requireContext(), request)
+    }
+
+    private fun onSignCancelled(e: Throwable) {
+        viewModel.onSignCanceled()
     }
 
     override fun onDestroyView() {

@@ -342,7 +342,7 @@
                 android:textAppearance="@style/TextAppearance.Label1" />
 
             <uikit.widget.LoaderView
-                android:id="@+id/loader"
+                android:id="@+id/confirmLoader"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
