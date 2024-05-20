@@ -9,10 +9,12 @@ import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.seconds
 
 class SearchSwapTokenViewModel(
     private val settings: SettingsRepository,
@@ -36,13 +38,18 @@ class SearchSwapTokenViewModel(
 
     fun loadData() {
         viewModelScope.launch {
-            getRemoteSwapTokens()?.let {
-                allTokensUi = convertToUi(it)
-                pendingSearchQuery?.let { query ->
-                    search(query)
-                    pendingSearchQuery = null
-                } ?: submitDataToUi(allTokensUi)
-            }
+            var tokens: List<SwapTokenEntity>?
+            var delay = 0.seconds
+            do {
+                delay(delay)
+                tokens = loadSwapTokens().getOrNull()
+                delay = 3.seconds
+            } while (tokens == null)
+            allTokensUi = convertToUi(tokens)
+            pendingSearchQuery?.let { query ->
+                search(query)
+                pendingSearchQuery = null
+            } ?: submitDataToUi(allTokensUi)
         }
     }
 
@@ -57,7 +64,7 @@ class SearchSwapTokenViewModel(
             return
         }
         searchJob = viewModelScope.launch {
-            submitDataToUi(convertToUi(swapRepository.search(query)))
+            submitDataToUi(convertToUi(swapRepository.searchToken(query)))
         }
     }
 
@@ -65,14 +72,9 @@ class SearchSwapTokenViewModel(
         _uiItemsFlow.value = items
     }
 
-    private suspend fun getRemoteSwapTokens(): List<SwapTokenEntity>? =
-        withContext(Dispatchers.IO) {
-            try {
-                swapRepository.getRemote()
-            } catch (e: Throwable) {
-                null
-            }
-        }
+    private suspend fun loadSwapTokens(): Result<List<SwapTokenEntity>> {
+        return swapRepository.gteCachedOrLoadRemoteTokens()
+    }
 
     private suspend fun convertToUi(tokens: List<SwapTokenEntity>): List<Item.Token> =
         withContext(Dispatchers.Default) {

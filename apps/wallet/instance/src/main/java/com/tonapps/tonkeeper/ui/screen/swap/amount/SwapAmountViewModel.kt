@@ -43,7 +43,7 @@ class SwapAmountViewModel(
     private var dstAmount: Long = 0
     private var minAmount: Long = 0
     private var reverse: Boolean = false
-    private var slippageTolerance: Float = 0.001f //0.1%
+    private var slippageTolerance: Float = 0f
 
     private var swapRateJob: Job? = null
 
@@ -81,6 +81,20 @@ class SwapAmountViewModel(
                 )
             )
         }.launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            settings.slippageValueFlow.collect {
+                slippageTolerance = it / 100f //e.g. 0.1% is 0.001
+                loadSwapRate()
+            }
+        }
+
+        viewModelScope.launch {
+            while (!swapRepository.hasCachedData()) {
+                swapRepository.gteCachedOrLoadRemoteTokens()
+                delay(5.seconds)
+            }
+        }
     }
 
     fun buildSwapRequest(): SwapRequestEntity? {
@@ -103,7 +117,7 @@ class SwapAmountViewModel(
         if (srcToken?.contractAddress == contractAddress) {
             return
         }
-        srcToken = swapRepository.getCached(contractAddress)
+        srcToken = swapRepository.getCachedToken(contractAddress)
         val state = this.state
         val tokenState = buildTokenState(srcToken)
             .copy(amountFormat = state.srcTokenState.amountFormat)
@@ -151,7 +165,7 @@ class SwapAmountViewModel(
         if (dstToken?.contractAddress == contractAddress) {
             return
         }
-        dstToken = swapRepository.getCached(contractAddress)
+        dstToken = swapRepository.getCachedToken(contractAddress)
         val state = this.state
         val tokenState = buildTokenState(dstToken)
             .copy(amountFormat = state.dstTokenState.amountFormat)
@@ -283,6 +297,10 @@ class SwapAmountViewModel(
         val askToken = dstToken ?: return
         val srcAmount = this.srcAmount
         val dstAmount = this.dstAmount
+        val slippageTolerance = this.slippageTolerance
+        if (slippageTolerance <= 0f) {
+            return
+        }
 
         prepareAndSubmitDataToUi(state.copy(swapInfoState = state.swapInfoState?.copy(loading = true)))
         swapRateJob = viewModelScope.launch {

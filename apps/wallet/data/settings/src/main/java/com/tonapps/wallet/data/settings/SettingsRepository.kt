@@ -66,6 +66,10 @@ class SettingsRepository(
     val walletPush = _walletPush.stateIn(scope, SharingStarted.Eagerly, null).filterNotNull()
 
     private val _slippageValueFlow = MutableEffectFlow<Float>()
+
+    /**
+     * In %
+     */
     val slippageValueFlow = _slippageValueFlow.stateIn(scope, SharingStarted.Eagerly, null).filterNotNull()
 
     private val _slippageExpertFlow = MutableEffectFlow<Boolean>()

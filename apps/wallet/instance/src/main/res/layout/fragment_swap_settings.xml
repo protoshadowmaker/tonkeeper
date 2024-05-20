@@ -60,7 +60,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="@dimen/offsetMedium">
 
-                <Button
+                <uikit.widget.SelectableButton
                     android:id="@+id/slippage1"
                     style="@style/Widget.App.Button.Secondary"
                     android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                     android:layout_width="12dp"
                     android:layout_height="0dp" />
 
-                <Button
+                <uikit.widget.SelectableButton
                     android:id="@+id/slippage3"
                     style="@style/Widget.App.Button.Secondary"
                     android:layout_width="match_parent"
@@ -86,7 +86,7 @@
                     android:layout_width="12dp"
                     android:layout_height="0dp" />
 
-                <Button
+                <uikit.widget.SelectableButton
                     android:id="@+id/slippage5"
                     style="@style/Widget.App.Button.Secondary"
                     android:layout_width="match_parent"

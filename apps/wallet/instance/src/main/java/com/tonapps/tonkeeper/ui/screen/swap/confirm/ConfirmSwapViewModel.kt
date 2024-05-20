@@ -40,8 +40,8 @@ class ConfirmSwapViewModel(
     ) {
         this.swapRequest = swapRequest
         viewModelScope.launch {
-            srcToken = swapRepository.getCached(swapRequest.fromTokenAddress)
-            dstToken = swapRepository.getCached(swapRequest.toTokenAddress)
+            srcToken = swapRepository.getCachedToken(swapRequest.fromTokenAddress)
+            dstToken = swapRepository.getCachedToken(swapRequest.toTokenAddress)
             prepareAndSubmitDataToUi(
                 buildConfirmSwapScreenState(
                     processState = ProcessState.IDLE,
@@ -192,8 +192,8 @@ class ConfirmSwapViewModel(
 
     private fun onSwapInfoLoaded(swapRequest: SwapRequestEntity, swapInfo: SwapInfoEntity) {
         this.swapRequest = swapRequest.copy(
-            srcAmount = swapInfo.offerValue,
-            dstAmount = swapInfo.askValue,
+            srcAmount = if (swapRequest.reverse) swapInfo.offerValue else swapRequest.srcAmount,
+            dstAmount = if (swapRequest.reverse) swapRequest.dstAmount else swapInfo.askValue,
             minAmount = swapInfo.minimumReceived
         )
         val state = state as? ConfirmSwapScreenState.Data ?: return

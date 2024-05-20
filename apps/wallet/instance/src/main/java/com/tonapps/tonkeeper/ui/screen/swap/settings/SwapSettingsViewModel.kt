@@ -22,6 +22,9 @@ class SwapSettingsViewModel(
         viewModelScope, SharingStarted.Eagerly, null
     ).filterNotNull()
 
+    private var slippageExpert = false
+    private var slippageValue = 1f
+
     init {
         initJob = combine(
             settingsRepository.slippageValueFlow,
@@ -44,8 +47,26 @@ class SwapSettingsViewModel(
         updateSlippageToDefault(5f)
     }
 
+    fun onExpertModeSelected() {
+        slippageExpert = true
+        slippageValue = 0f
+    }
+
+    fun onSlippageChanged(value: Float) {
+        slippageValue = value
+    }
+
+    fun onSaveClicked(): Boolean {
+        if (slippageExpert && slippageValue < 0.1f) {
+            return false
+        }
+        settingsRepository.slippageExpert = slippageExpert
+        settingsRepository.slippageValue = slippageValue
+        return true
+    }
+
     private fun updateSlippageToDefault(value: Float) {
-        settingsRepository.slippageExpert = false
-        settingsRepository.slippageValue = value
+        slippageExpert = false
+        slippageValue = value
     }
 }

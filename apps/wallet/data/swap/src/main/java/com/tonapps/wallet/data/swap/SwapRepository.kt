@@ -15,7 +15,11 @@ class SwapRepository(
     private var cache: List<SwapTokenEntity> = emptyList()
     private var mapCache: Map<String, SwapTokenEntity> = mapOf()
 
-    fun getCached(contractAddress: String): SwapTokenEntity? {
+    fun hasCachedData(): Boolean {
+        return cache.isNotEmpty()
+    }
+
+    fun getCachedToken(contractAddress: String): SwapTokenEntity? {
         return mapCache[contractAddress]
     }
 
@@ -51,11 +55,18 @@ class SwapRepository(
         }
     }
 
-    suspend fun getRemote(): List<SwapTokenEntity> = withContext(Dispatchers.IO) {
-        load()
-    }
+    suspend fun gteCachedOrLoadRemoteTokens(): Result<List<SwapTokenEntity>> =
+        withContext(Dispatchers.IO) {
+            if (cache.isNotEmpty()) {
+                Result.success(cache)
+            } else {
+                runCatching { load() }
+            }
+        }
 
-    suspend fun search(query: String): List<SwapTokenEntity> = withContext(Dispatchers.Default) {
+    suspend fun searchToken(
+        query: String
+    ): List<SwapTokenEntity> = withContext(Dispatchers.Default) {
         val searchQuery = query.trim()
         cache.filter {
             it.symbol.contains(searchQuery, true) || it.displayName.contains(query, true)

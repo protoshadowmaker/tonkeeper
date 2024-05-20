@@ -13,6 +13,7 @@ import uikit.extensions.pinToBottomInsets
 import uikit.widget.InputView
 import uikit.widget.ModalHeader
 import uikit.widget.SwitchView
+import kotlin.math.roundToInt
 
 class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFragment.BottomSheet {
 
@@ -31,43 +32,84 @@ class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFr
         headerView.onCloseClick = {
             finish()
         }
-        saveButton.setOnClickListener {
-            finish()
-        }
         slippageInput.inputType =
             EditorInfo.TYPE_CLASS_NUMBER or EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
         slippageInput.disableClearButton = true
-        slippage1.setOnClickListener {
-            expertMode.checked = false
-            viewModel.onSlippage1Clicked()
-        }
-        slippage3.setOnClickListener {
-            expertMode.checked = false
-            viewModel.onSlippage3Clicked()
-        }
-        slippage5.setOnClickListener {
-            expertMode.checked = false
-            viewModel.onSlippage5Clicked()
-        }
-        expertMode.doCheckedChanged = ::onExpertModeChanged
         saveButton.pinToBottomInsets()
         lifecycleScope.launch {
             viewModel.uiStateFlow.collect {
                 if (it.slippageExpert) {
                     expertMode.checked = true
                     slippageInput.text = it.slippageValue.toString()
+                    initListeners()
+                } else {
+                    initListeners()
+                    when (it.slippageValue.roundToInt()) {
+                        1 -> slippage1.callOnClick()
+                        3 -> slippage3.callOnClick()
+                        5 -> slippage5.callOnClick()
+                        else -> slippage1.callOnClick()
+                    }
                 }
             }
         }
     }
 
+    private fun initListeners() {
+        saveButton.setOnClickListener {
+            if (viewModel.onSaveClicked()) {
+                finish()
+            } else {
+                slippageInput.error = true
+            }
+        }
+        slippage1.setOnClickListener {
+            onDefaultSlippageClicked {
+                slippage1.isSelected = true
+                viewModel.onSlippage1Clicked()
+            }
+        }
+        slippage3.setOnClickListener {
+            onDefaultSlippageClicked {
+                slippage3.isSelected = true
+                viewModel.onSlippage3Clicked()
+            }
+        }
+        slippage5.setOnClickListener {
+            onDefaultSlippageClicked {
+                slippage5.isSelected = true
+                viewModel.onSlippage5Clicked()
+            }
+        }
+        slippageInput.doOnTextChange = {
+            viewModel.onSlippageChanged(it.toFloatOrNull() ?: 0f)
+        }
+        expertMode.doCheckedChanged = ::onExpertModeChanged
+    }
+
+    private fun onDefaultSlippageClicked(callback: () -> Unit) {
+        expertMode.checked = false
+        unselect()
+        callback()
+    }
+
+    private fun unselect() {
+        slippage1.isSelected = false
+        slippage3.isSelected = false
+        slippage5.isSelected = false
+    }
+
     private fun onExpertModeChanged(checked: Boolean) {
         slippageInput.isEnabled = checked
         if (checked) {
+            unselect()
             slippageInput.focus()
+            viewModel.onExpertModeSelected()
         } else {
+            slippageInput.error = false
             slippageInput.hideKeyboard()
             slippageInput.text = ""
+            slippage1.callOnClick()
         }
     }
 
