@@ -1,20 +1,15 @@
-package com.tonapps.tonkeeper.ui.screen.swap.search.list
+package com.tonapps.tonkeeper.ui.screen.swap.search.list.suggested
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.tonapps.tonkeeper.ui.screen.swap.search.list.holder.HeaderHolder
-import com.tonapps.tonkeeper.ui.screen.swap.search.list.holder.TokenHolder
-import com.tonapps.tonkeeper.ui.screen.swap.search.list.holder.TokenSkeletonHolder
+import com.tonapps.tonkeeper.ui.screen.swap.search.list.suggested.holder.TokenHolder
 import com.tonapps.uikit.list.BaseListAdapter
 import com.tonapps.uikit.list.BaseListHolder
 import com.tonapps.uikit.list.BaseListItem
-import uikit.drawable.DrawableCache
 
-class Adapter(
+class SuggestedAdapter(
     private val onClickToken: (contractAddress: String) -> Unit,
 ) : BaseListAdapter() {
-
-    private val itemsBgCache: DrawableCache = DrawableCache()
 
     init {
         submitList(emptyList())
@@ -25,10 +20,7 @@ class Adapter(
         viewType: Int
     ): BaseListHolder<out BaseListItem> {
         return when (viewType) {
-            Item.TYPE_HEADER -> HeaderHolder(parent)
-            Item.TYPE_SUGGESTED_LIST -> TODO()
-            Item.TYPE_TOKEN -> TokenHolder(parent, itemsBgCache, onClickToken)
-            Item.TYPE_TOKEN_SKELETON -> TokenSkeletonHolder(parent)
+            SuggestedTokenItem.TYPE_TOKEN -> TokenHolder(parent, onClickToken)
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -36,7 +28,6 @@ class Adapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         recyclerView.setHasFixedSize(false)
-        recyclerView.isNestedScrollingEnabled = true
     }
 
 }

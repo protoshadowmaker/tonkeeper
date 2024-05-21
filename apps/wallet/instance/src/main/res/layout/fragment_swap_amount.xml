@@ -131,7 +131,6 @@
                 android:paddingHorizontal="6dp"
                 android:textAppearance="@style/TextAppearance.Label1"
                 android:textColor="?attr/buttonTertiaryForegroundColor"
-
                 tools:text="TON" />
         </uikit.widget.RowLayout>
 

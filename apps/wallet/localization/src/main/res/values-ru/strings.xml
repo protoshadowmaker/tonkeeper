@@ -315,4 +315,6 @@
     <string name="slippage_hint">Пользовательский %</string>
     <string name="expert_mode">Экспертный режим</string>
     <string name="expert_mode_description">Позволяет совершать сделки с высокой погрешностью. Используйте на свой страх и риск.</string>
+    <string name="suggested">Предлагаемые</string>
+    <string name="other">Другие</string>
 </resources>

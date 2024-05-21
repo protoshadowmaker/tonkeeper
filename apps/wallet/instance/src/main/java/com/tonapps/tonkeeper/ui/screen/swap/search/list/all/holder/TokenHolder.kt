@@ -1,8 +1,8 @@
-package com.tonapps.tonkeeper.ui.screen.swap.search.list.holder
+package com.tonapps.tonkeeper.ui.screen.swap.search.list.all.holder
 
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
-import com.tonapps.tonkeeper.ui.screen.swap.search.list.Item
+import com.tonapps.tonkeeper.ui.screen.swap.search.list.all.TokenItem
 import com.tonapps.tonkeeperx.R
 import com.tonapps.uikit.color.backgroundContentColor
 import com.tonapps.uikit.color.buttonTertiaryBackgroundColor
@@ -21,7 +21,7 @@ class TokenHolder(
     parent: ViewGroup,
     private val bgCache: DrawableCache = DrawableCache(),
     private val onClickListener: (contractAddress: String) -> Unit
-) : Holder<Item.Token>(parent, R.layout.view_cell_jetton) {
+) : Holder<TokenItem.Token>(parent, R.layout.view_cell_jetton) {
 
     private val amountZeroColor = context.textSecondaryColor
     private val amountPositiveColor = context.textPrimaryColor
@@ -32,7 +32,7 @@ class TokenHolder(
     private val balanceView = findViewById<AppCompatTextView>(R.id.balance)
     private val balanceFiatView = findViewById<AppCompatTextView>(R.id.balance_currency)
 
-    override fun onBind(item: Item.Token) {
+    override fun onBind(item: TokenItem.Token) {
         val bgColor = if (item.selected) {
             context.buttonTertiaryBackgroundColor
         } else {
