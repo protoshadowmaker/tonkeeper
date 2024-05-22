@@ -19,7 +19,7 @@ sealed class TokenItem(type: Int) : BaseListItem(type) {
         val contractAddress: String,
         val symbol: String,
         val name: String,
-        val balance: Float,
+        val balance: Double,
         val balanceFormat: CharSequence,
         val fiat: Float,
         val fiatFormat: CharSequence,

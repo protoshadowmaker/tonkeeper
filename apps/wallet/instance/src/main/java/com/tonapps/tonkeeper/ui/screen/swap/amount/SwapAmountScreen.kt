@@ -19,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
 import uikit.drawable.FooterDrawable
 import uikit.drawable.HeaderDrawable
+import uikit.extensions.applyBottomNavigationInsets
 import uikit.extensions.collectFlow
 import uikit.extensions.gone
 import uikit.extensions.invisible
@@ -31,6 +32,8 @@ import uikit.widget.HeaderView
 class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragment.BottomSheet {
 
     private val viewModel: SwapAmountViewModel by viewModel()
+
+    private val scrollContainer: View by lazy { requireView().findViewById(R.id.scrollContainer) }
 
     private val headerView: HeaderView by lazy { requireView().findViewById(R.id.header) }
     private val maxValueTextView: TextView by lazy { requireView().findViewById(R.id.amountMax) }
@@ -122,6 +125,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         providerFee.setOnClickListener {
             navigation?.toast(getString(com.tonapps.wallet.localization.R.string.liquidity_provider_fee_info))
         }
+        scrollContainer.applyBottomNavigationInsets()
 
         collectFlow(viewModel.uiStateFlow) { state ->
             onStateChanged(state)

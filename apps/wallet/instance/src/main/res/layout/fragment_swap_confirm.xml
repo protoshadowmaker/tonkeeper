@@ -27,6 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:id="@+id/scrollContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/buttonsContainer"
@@ -318,7 +319,6 @@
             style="@style/Widget.App.Button.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/offsetMedium"
             android:layout_marginEnd="@dimen/offsetSmall"
             android:layout_weight="1"
             android:text="@string/cancel"

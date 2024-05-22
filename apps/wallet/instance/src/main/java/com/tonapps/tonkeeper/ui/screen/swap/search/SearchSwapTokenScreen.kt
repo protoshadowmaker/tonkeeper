@@ -102,6 +102,7 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
     }
 
     private fun onTokenClicked(contractAddress: String) {
+        viewModel.onTokeSelected(contractAddress)
         navigation?.setFragmentResult(request, Bundle().apply {
             putString(request, contractAddress)
         })

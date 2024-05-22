@@ -91,7 +91,7 @@ val koinModel = module {
     viewModel { NotificationsViewModel(get(), get(), get()) }
     viewModel { parameters -> TokenViewModel(get(), tokenAddress = parameters.get(), get(), get(), get(), get(), get(), get()) }
     viewModel { DAppViewModel(get(), get(), get()) }
-    viewModel { SearchSwapTokenViewModel(get(), get()) }
+    viewModel { SearchSwapTokenViewModel(get(), get(), get(), get(), get()) }
     viewModel { SwapAmountViewModel(get(), get(), get(), get(), get()) }
     viewModel { ConfirmSwapViewModel(get()) }
     viewModel { SwapSettingsViewModel(get()) }
