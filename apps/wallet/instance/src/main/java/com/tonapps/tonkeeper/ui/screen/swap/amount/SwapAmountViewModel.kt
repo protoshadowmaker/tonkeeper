@@ -7,6 +7,7 @@ import com.tonapps.blockchain.ton.extensions.toUserFriendly
 import com.tonapps.icu.CurrencyFormatter
 import com.tonapps.wallet.data.account.WalletRepository
 import com.tonapps.wallet.data.account.entities.WalletEntity
+import com.tonapps.wallet.data.core.HIDDEN_BALANCE
 import com.tonapps.wallet.data.settings.SettingsRepository
 import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
@@ -118,14 +119,33 @@ class SwapAmountViewModel(
             return
         }
         srcToken = swapRepository.getCachedToken(contractAddress)
+        if (dstToken?.contractAddress == contractAddress) {
+            dstToken = null
+        }
+        val sideEffects = mutableSetOf(SideEffect.UPDATE_SRC_TOKEN)
+        val srcTokenState: TokenState
+        val dstTokenState: TokenState
+        if (reverse) {
+            srcAmount = 0
+            srcTokenState = buildTokenState(srcToken)
+            dstTokenState = buildTokenState(dstToken)
+                .copy(amountFormat = state.dstTokenState.amountFormat)
+        } else {
+            srcAmount = 0
+            dstAmount = 0
+            srcTokenState = buildTokenState(srcToken)
+            dstTokenState = buildTokenState(dstToken)
+            sideEffects.add(SideEffect.UPDATE_DST_TOKEN)
+        }
         val state = this.state
-        val tokenState = buildTokenState(srcToken)
-            .copy(amountFormat = state.srcTokenState.amountFormat)
         prepareAndSubmitDataToUi(
             state.copy(
-                srcTokenState = tokenState,
-                swapActionState = buildActionState(state.swapInfoState)
-            )
+                srcTokenState = srcTokenState,
+                dstTokenState = dstTokenState,
+                swapInfoState = null,
+                swapActionState = buildActionState(null)
+            ),
+            sideEffects
         )
         loadSwapRate()
     }
@@ -166,14 +186,30 @@ class SwapAmountViewModel(
             return
         }
         dstToken = swapRepository.getCachedToken(contractAddress)
+        val sideEffects = mutableSetOf(SideEffect.UPDATE_DST_TOKEN)
+        val srcTokenState: TokenState
+        val dstTokenState: TokenState
+        if (reverse) {
+            srcAmount = 0
+            dstAmount = 0
+            srcTokenState = buildTokenState(srcToken)
+            dstTokenState = buildTokenState(dstToken)
+            sideEffects.add(SideEffect.UPDATE_SRC_TOKEN)
+        } else {
+            dstAmount = 0
+            srcTokenState = buildTokenState(srcToken)
+                .copy(amountFormat = state.srcTokenState.amountFormat)
+            dstTokenState = buildTokenState(dstToken)
+        }
         val state = this.state
-        val tokenState = buildTokenState(dstToken)
-            .copy(amountFormat = state.dstTokenState.amountFormat)
         prepareAndSubmitDataToUi(
             state.copy(
-                dstTokenState = tokenState,
-                swapActionState = buildActionState(state.swapInfoState)
-            )
+                srcTokenState = srcTokenState,
+                dstTokenState = dstTokenState,
+                swapInfoState = null,
+                swapActionState = buildActionState(null)
+            ),
+            sideEffects
         )
         loadSwapRate()
     }
@@ -255,12 +291,16 @@ class SwapAmountViewModel(
         } else {
             val accountToken = tokensMap[token.contractAddress]
             val balanceFormat = if (accountToken != null) {
-                val formattedValue = token.flexFormatCoins(
-                    Coin.toNano(
-                        accountToken.balance.value,
-                        accountToken.decimals
+                val formattedValue = if (settings.hiddenBalances) {
+                    HIDDEN_BALANCE
+                } else {
+                    token.flexFormatCoins(
+                        Coin.toNano(
+                            accountToken.balance.value,
+                            accountToken.decimals
+                        )
                     )
-                )
+                }
                 l10n.getString(com.tonapps.wallet.localization.R.string.balance, formattedValue)
             } else {
                 null

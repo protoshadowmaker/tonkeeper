@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tonapps.blockchain.Coin
 import com.tonapps.icu.CurrencyFormatter
+import com.tonapps.wallet.data.account.WalletRepository
 import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
 import com.tonapps.wallet.data.swap.entity.SwapRequestEntity
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
+import com.tonapps.wallet.data.token.TokenRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +21,8 @@ import java.math.BigInteger
 import kotlin.time.Duration.Companion.seconds
 
 class ConfirmSwapViewModel(
+    private val walletRepository: WalletRepository,
+    private val tokenRepository: TokenRepository,
     private val swapRepository: SwapRepository
 ) : ViewModel() {
 

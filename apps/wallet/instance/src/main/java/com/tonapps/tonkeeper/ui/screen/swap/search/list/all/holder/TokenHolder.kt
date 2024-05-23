@@ -46,7 +46,7 @@ class TokenHolder(
         }
         iconView.setImageURI(item.iconUri, this)
         titleView.text = item.symbol
-        balanceView.text = if (item.hiddenBalance) {
+        balanceView.text = if (item.hiddenBalance && item.balance > 0) {
             HIDDEN_BALANCE
         } else {
             item.balanceFormat

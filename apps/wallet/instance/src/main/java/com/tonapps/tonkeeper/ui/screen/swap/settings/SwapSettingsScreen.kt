@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
-import androidx.lifecycle.lifecycleScope
 import com.tonapps.tonkeeperx.R
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
-import uikit.extensions.pinToBottomInsets
+import uikit.extensions.applyBottomInsets
+import uikit.extensions.collectFlow
 import uikit.widget.InputView
 import uikit.widget.ModalHeader
 import uikit.widget.SwitchView
@@ -35,21 +34,19 @@ class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFr
         slippageInput.inputType =
             EditorInfo.TYPE_CLASS_NUMBER or EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
         slippageInput.disableClearButton = true
-        saveButton.pinToBottomInsets()
-        lifecycleScope.launch {
-            viewModel.uiStateFlow.collect {
-                if (it.slippageExpert) {
-                    expertMode.checked = true
-                    slippageInput.text = it.slippageValue.toString()
-                    initListeners()
-                } else {
-                    initListeners()
-                    when (it.slippageValue.roundToInt()) {
-                        1 -> slippage1.callOnClick()
-                        3 -> slippage3.callOnClick()
-                        5 -> slippage5.callOnClick()
-                        else -> slippage1.callOnClick()
-                    }
+        saveButton.applyBottomInsets()
+        collectFlow(viewModel.uiStateFlow) {
+            if (it.slippageExpert) {
+                expertMode.checked = true
+                slippageInput.text = it.slippageValue.toString()
+                initListeners()
+            } else {
+                initListeners()
+                when (it.slippageValue.roundToInt()) {
+                    1 -> slippage1.callOnClick()
+                    3 -> slippage3.callOnClick()
+                    5 -> slippage5.callOnClick()
+                    else -> slippage1.callOnClick()
                 }
             }
         }
