@@ -83,6 +83,8 @@ class API(
 
     fun emulation(testnet: Boolean) = provider.emulation.get(testnet)
 
+    fun liteServer(testnet: Boolean) = provider.liteServer.get(testnet)
+
     fun rates() = provider.rates.get(false)
 
     fun dex() = provider.dex.get(false)
@@ -411,6 +413,14 @@ class API(
         val array = JSONObject(tonAPIHttpClient.get(url)).getJSONArray("points")
         return (0 until array.length()).map { index ->
             ChartEntity(array.getJSONArray(index))
+        }
+    }
+
+    suspend fun getServerTime(testnet: Boolean): Int = withContext(Dispatchers.IO) {
+        try {
+            liteServer(testnet).getRawTime().time
+        } catch (e: Throwable) {
+            0
         }
     }
 
