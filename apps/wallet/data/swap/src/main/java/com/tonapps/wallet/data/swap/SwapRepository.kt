@@ -55,7 +55,7 @@ class SwapRepository(
         }
     }
 
-    suspend fun gteCachedOrLoadRemoteTokens(): Result<List<SwapTokenEntity>> =
+    suspend fun getCachedOrLoadRemoteTokens(): Result<List<SwapTokenEntity>> =
         withContext(Dispatchers.IO) {
             if (cache.isNotEmpty()) {
                 Result.success(cache)

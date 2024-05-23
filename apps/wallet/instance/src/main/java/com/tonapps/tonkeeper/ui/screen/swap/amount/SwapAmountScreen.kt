@@ -31,6 +31,8 @@ import uikit.widget.HeaderView
 
 class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragment.BottomSheet {
 
+    private val args: SwapAmountArgs by lazy { SwapAmountArgs(requireArguments()) }
+
     private val viewModel: SwapAmountViewModel by viewModel()
 
     private val scrollContainer: View by lazy { requireView().findViewById(R.id.scrollContainer) }
@@ -129,6 +131,10 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
 
         collectFlow(viewModel.uiStateFlow) { state ->
             onStateChanged(state)
+        }
+
+        if (savedInstanceState == null) {
+            viewModel.init(srcToken = args.fromToken, dstToken = args.toToken)
         }
     }
 
@@ -295,8 +301,14 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         private const val SRC_TOKEN_REQUEST_KEY = "src_token_request"
         private const val DST_TOKEN_REQUEST_KEY = "dst_token_request"
 
-        fun newInstance(): SwapAmountScreen {
-            return SwapAmountScreen()
+        fun newInstance(
+            address: String,
+            fromToken: String,
+            toToken: String? = null
+        ): SwapAmountScreen {
+            return SwapAmountScreen().apply {
+                arguments = SwapAmountArgs(fromToken = fromToken, toToken = toToken).toBundle()
+            }
         }
     }
 }

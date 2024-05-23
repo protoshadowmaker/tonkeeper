@@ -149,7 +149,7 @@ class SearchSwapTokenViewModel(
     }
 
     private suspend fun loadSwapTokens(): Result<List<SwapTokenEntity>> {
-        return swapRepository.gteCachedOrLoadRemoteTokens()
+        return swapRepository.getCachedOrLoadRemoteTokens()
     }
 
     private suspend fun convertToTokenUi(

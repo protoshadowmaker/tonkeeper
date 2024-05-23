@@ -1,31 +1,27 @@
 package com.tonapps.tonkeeper.ui.screen.main
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.tonapps.tonkeeper.extensions.removeAllFragments
-import com.tonapps.tonkeeperx.R
 import com.tonapps.tonkeeper.ui.screen.browser.main.BrowserMainScreen
-import com.tonapps.tonkeeper.ui.screen.root.RootViewModel
 import com.tonapps.tonkeeper.ui.screen.collectibles.CollectiblesScreen
 import com.tonapps.tonkeeper.ui.screen.events.EventsScreen
 import com.tonapps.tonkeeper.ui.screen.picker.PickerScreen
 import com.tonapps.tonkeeper.ui.screen.root.RootEvent
-import com.tonapps.tonkeeper.ui.screen.swap.SwapScreen
+import com.tonapps.tonkeeper.ui.screen.root.RootViewModel
+import com.tonapps.tonkeeper.ui.screen.swap.amount.SwapAmountScreen
 import com.tonapps.tonkeeper.ui.screen.wallet.WalletScreen
+import com.tonapps.tonkeeperx.R
 import com.tonapps.uikit.color.constantBlackColor
 import com.tonapps.uikit.color.drawable
-import com.tonapps.wallet.data.account.WalletType
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
 import uikit.drawable.BarDrawable
 import uikit.extensions.collectFlow
@@ -114,7 +110,7 @@ class MainScreen: BaseFragment(R.layout.fragment_main) {
         collectFlow(mainViewModel.childBottomScrolled, bottomTabsView::setDivider)
         collectFlow(rootViewModel.eventFlow.filterIsInstance<RootEvent.OpenTab>().map { mainDeepLinks[it.link] }.filterNotNull(), this::forceSelectTab)
         collectFlow(rootViewModel.eventFlow.filterIsInstance<RootEvent.Swap>()) {
-            navigation?.add(SwapScreen.newInstance(it.uri, it.address, it.from, it.to))
+            navigation?.add(SwapAmountScreen.newInstance(it.address, it.from, it.to))
         }
         collectFlow(mainViewModel.browserTabEnabled) { enabled ->
             if (enabled) {

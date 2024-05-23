@@ -35,13 +35,9 @@ class ActionsHolder(parent: ViewGroup): Holder<Item.Actions>(parent, R.layout.vi
             navigation?.add(QRScreen.newInstance(item.address, item.token, item.walletType))
         }
         swapView.setOnClickListener {
-            navigation?.add(SwapScreen.newInstance(item.swapUri, item.address, TokenEntity.TON.address))
-        }
-        stakeView.setOnClickListener {
-            navigation?.add(SwapAmountScreen.newInstance())
+            navigation?.add(SwapAmountScreen.newInstance(item.address, TokenEntity.TON.address))
         }
 
-        //TODO rollback changes
         swapView.isEnabled = item.walletType == WalletType.Default && !item.disableSwap
         sendView.isEnabled = item.walletType != WalletType.Watch
         scanView.isEnabled = item.walletType != WalletType.Watch

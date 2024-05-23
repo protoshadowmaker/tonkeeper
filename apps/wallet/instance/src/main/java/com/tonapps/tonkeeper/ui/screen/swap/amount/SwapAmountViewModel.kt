@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tonapps.blockchain.Coin
 import com.tonapps.blockchain.ton.extensions.toUserFriendly
 import com.tonapps.icu.CurrencyFormatter
+import com.tonapps.wallet.api.entity.TokenEntity
 import com.tonapps.wallet.data.account.WalletRepository
 import com.tonapps.wallet.data.account.entities.WalletEntity
 import com.tonapps.wallet.data.core.HIDDEN_BALANCE
@@ -36,6 +37,8 @@ class SwapAmountViewModel(
     private val swapRepository: SwapRepository
 ) : ViewModel() {
 
+    private var initCompleted: Boolean = false
+    private var initAction: () -> Unit = {}
     private var activeWallet: WalletEntity? = null
     private var tokensMap: Map<String, AccountTokenEntity> = emptyMap()
     private var srcToken: SwapTokenEntity? = SwapTokenEntity.TON
@@ -65,16 +68,8 @@ class SwapAmountViewModel(
             activeWallet = wallet
             tokensMap = tokenRepository
                 .getLocal(currency, wallet.accountId, wallet.testnet)
-                .associateBy {
-                    if (it.address == "TON") {
-                        SwapTokenEntity.TON.contractAddress
-                    } else {
-                        it.address.toUserFriendly(
-                            wallet = false,
-                            testnet = wallet.testnet
-                        )
-                    }
-                }
+                .associateBy { it.address.mapTokenAddress(wallet.testnet) }
+            checkInit()
             prepareAndSubmitDataToUi(
                 state.copy(
                     srcTokenState = buildTokenState(srcToken),
@@ -92,10 +87,39 @@ class SwapAmountViewModel(
 
         viewModelScope.launch {
             while (!swapRepository.hasCachedData()) {
-                swapRepository.gteCachedOrLoadRemoteTokens()
+                swapRepository.getCachedOrLoadRemoteTokens()
                 delay(5.seconds)
             }
+            checkInit()
         }
+    }
+
+    fun init(srcToken: String, dstToken: String?) {
+        initAction = {
+            initCompleted = doInit(srcToken = srcToken, dstToken = dstToken)
+        }
+        checkInit()
+    }
+
+    private fun checkInit() {
+        if (!initCompleted) {
+            initAction()
+        }
+    }
+
+    private fun doInit(srcToken: String, dstToken: String?): Boolean {
+        val wallet = activeWallet ?: return false
+        if (!swapRepository.hasCachedData()) {
+            return false
+        }
+        val mappedSrcToken = srcToken.mapTokenAddress(wallet.testnet)
+        val mappedDstToken = dstToken?.mapTokenAddress(wallet.testnet)
+        swapRepository.getCachedToken(mappedSrcToken)?.let { onSourceChanged(it.contractAddress) }
+        if (mappedDstToken != null) {
+            swapRepository.getCachedToken(mappedDstToken)
+                ?.let { onDestinationChanged(it.contractAddress) }
+        }
+        return true
     }
 
     fun buildSwapRequest(): SwapRequestEntity? {
@@ -455,6 +479,17 @@ class SwapAmountViewModel(
             2..2
         } else {
             0..decimals
+        }
+    }
+
+    private fun String.mapTokenAddress(testnet: Boolean): String {
+        return if (this == TokenEntity.TON.address) {
+            SwapTokenEntity.TON.contractAddress
+        } else {
+            this.toUserFriendly(
+                wallet = false,
+                testnet = testnet
+            )
         }
     }
 
