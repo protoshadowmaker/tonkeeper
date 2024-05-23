@@ -8,7 +8,7 @@ import com.tonapps.tonkeeper.ui.screen.swap.search.list.all.TokenItem
 import com.tonapps.tonkeeper.ui.screen.swap.search.list.suggested.SuggestedTokenItem
 import com.tonapps.uikit.list.ListCell
 import com.tonapps.wallet.data.account.WalletRepository
-import com.tonapps.wallet.data.core.ScreenCacheSource
+import com.tonapps.wallet.data.core.GenericCacheSource
 import com.tonapps.wallet.data.core.WalletCurrency
 import com.tonapps.wallet.data.core.parcelable.ParcelableString
 import com.tonapps.wallet.data.settings.SettingsRepository
@@ -34,7 +34,7 @@ class SearchSwapTokenViewModel(
     private val tokenRepository: TokenRepository,
     private val settings: SettingsRepository,
     private val swapRepository: SwapRepository,
-    private val screenCacheSource: ScreenCacheSource,
+    private val cacheSource: GenericCacheSource,
 ) : ViewModel() {
 
     private val globalScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -95,16 +95,14 @@ class SearchSwapTokenViewModel(
     }
 
     private suspend fun getSuggestedTokens(): List<String> = withContext(Dispatchers.IO) {
-        screenCacheSource.get(CACHE_NAME_SUGGESTED, "all", false) { parcel ->
+        cacheSource.get(CACHE_NAME_SUGGESTED) { parcel ->
             ParcelableString(parcel.readString())
         }.mapNotNull { it.value }
     }
 
     private suspend fun saveSuggestedTokens(addresses: List<String>) = withContext(Dispatchers.IO) {
-        screenCacheSource.set(
+        cacheSource.set(
             CACHE_NAME_SUGGESTED,
-            "all",
-            false,
             addresses.map { ParcelableString(it) }
         )
     }
