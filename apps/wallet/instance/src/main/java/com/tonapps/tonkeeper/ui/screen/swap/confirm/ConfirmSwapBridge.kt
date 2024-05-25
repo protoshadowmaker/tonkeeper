@@ -6,9 +6,11 @@ import uikit.widget.webview.bridge.JsBridge
 
 class ConfirmSwapBridge(
     val sendTransaction: suspend (request: SignRequestEntity) -> String?,
-    val sendTransactionErrorCallback: (e: Throwable) -> Unit
+    val sendTransactionErrorCallback: (e: Throwable) -> Unit,
+    val sendTransactionWebErrorCallback: (e: Throwable) -> Unit,
 ) : JsBridge("tonkeeperStonfi") {
-    override val availableFunctions = arrayOf(FUNCTION_SEND_TRANSACTION)
+    override val availableFunctions =
+        arrayOf(FUNCTION_SEND_TRANSACTION, FUNCTION_SEND_TRANSACTION_ERROR)
 
     override fun jsInjection(): String {
         //TODO mark to readme
@@ -23,11 +25,14 @@ class ConfirmSwapBridge(
             } catch (e: Throwable) {
                 sendTransactionErrorCallback(e)
             }
+        } else if (name == FUNCTION_SEND_TRANSACTION_ERROR) {
+            sendTransactionWebErrorCallback(Exception("Unknown error"))
         }
         return null
     }
 
     companion object {
         private const val FUNCTION_SEND_TRANSACTION = "sendTransaction"
+        private const val FUNCTION_SEND_TRANSACTION_ERROR = "sendTransactionError"
     }
 }

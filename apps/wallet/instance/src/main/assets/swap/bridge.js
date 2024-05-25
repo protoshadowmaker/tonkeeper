@@ -13,6 +13,12 @@ function swapTonToJetton(userWalletAddress, offerAmount, askJettonAddress, minAs
             }));
         },
         (error) => {
+            ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'invokeRnFunc',
+                invocationId: 'id',
+                name: 'sendTransactionError',
+                args: [error],
+            }));
         },
     )
 }
@@ -32,6 +38,12 @@ function swapJettonToTon(userWalletAddress, offerAmount, offerJettonAddress, min
             }));
         },
         (error) => {
+            ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'invokeRnFunc',
+                invocationId: 'id',
+                name: 'sendTransactionError',
+                args: [error],
+            }));
         },
     )
 }
@@ -52,6 +64,12 @@ function swapJettonToJetton(userWalletAddress, offerJettonAddress, offerAmount, 
             }));
         },
         (error) => {
+            ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'invokeRnFunc',
+                invocationId: 'id',
+                name: 'sendTransactionError',
+                args: [error],
+            }));
         },
     )
 }

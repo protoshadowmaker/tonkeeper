@@ -64,7 +64,8 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         webView.loadUrl("file:///android_asset/swap/index.html")
         webView.jsBridge = ConfirmSwapBridge(
             sendTransaction = ::sing,
-            sendTransactionErrorCallback = ::onSignCancelled
+            sendTransactionErrorCallback = ::onSignCancelled,
+            sendTransactionWebErrorCallback = ::onWebError
         )
         confirm.setOnClickListener { viewModel.onConfirmClicked() }
         priceImpact.setOnClickListener {
@@ -174,6 +175,11 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
 
     private fun onSignCancelled(e: Throwable) {
         viewModel.onSignCanceled()
+    }
+
+    private fun onWebError(e: Throwable) {
+        viewModel.onSignCanceled()
+        navigation?.toast(com.tonapps.wallet.localization.R.string.error)
     }
 
     override fun onDestroyView() {
