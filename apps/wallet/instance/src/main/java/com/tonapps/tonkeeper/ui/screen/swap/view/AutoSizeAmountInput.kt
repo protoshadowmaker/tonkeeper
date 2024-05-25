@@ -1,61 +1,54 @@
-package com.tonapps.tonkeeper.fragment.send.view
+package com.tonapps.tonkeeper.ui.screen.swap.view
 
 import android.content.Context
 import android.graphics.Rect
-import android.text.DynamicLayout
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.View
 import androidx.appcompat.R
 import androidx.appcompat.widget.AppCompatEditText
 import com.tonapps.blockchain.Coin
 import com.tonapps.icu.CurrencyFormatter
-import uikit.extensions.dp
 
-class AmountInput @JvmOverloads constructor(
+class AutoSizeAmountInput @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = R.attr.editTextStyle,
 ) : AppCompatEditText(context, attrs, defStyle), TextWatcher {
 
-    private companion object {
-        private const val maxTextSize = 40f
-    }
-
     var doAfterValueChanged: ((Double) -> Unit)? = null
 
     private var decimalCount = 9
-    private val parentWidth: Int
-        get() = ((parent?.parent as? View)?.measuredWidth?:0) - 128.dp
 
     private var originalTextSize: Float = textSize
     private val separator = CurrencyFormatter.monetaryDecimalSeparator
 
     init {
         filters = arrayOf(InputFilter.LengthFilter(21))
-        applyTextSize(maxTextSize)
         addTextChangedListener(this)
-        gravity = Gravity.CENTER
+        gravity = Gravity.END
     }
 
     private fun resizeText() {
-        val countFit = (parentWidth / originalTextSize).toInt() - 3
-        val countNow = text?.length ?: 0
-        if (countNow > countFit) {
-            val newSize = maxTextSize * countFit / countNow
-            applyTextSize(newSize)
-        } else {
-            applyTextSize(maxTextSize)
+        val stepSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 0.5f, resources.displayMetrics
+        )
+        val minTextSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 8f, resources.displayMetrics
+        )
+        var currentTextSize = originalTextSize
+        applyTextSize(currentTextSize)
+        while (paint.measureText(editableText.toString()) > measuredWidth && currentTextSize > minTextSize) {
+            currentTextSize -= stepSize
+            applyTextSize(currentTextSize)
         }
     }
 
     private fun applyTextSize(size: Float) {
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -133,5 +126,13 @@ class AmountInput @JvmOverloads constructor(
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
         resizeText()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (w != oldw) {
+            resizeText()
+            post { requestLayout() }
+        }
     }
 }

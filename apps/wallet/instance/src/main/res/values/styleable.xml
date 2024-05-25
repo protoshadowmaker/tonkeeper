@@ -8,8 +8,4 @@
         <attr name="android:title" format="string|reference" />
         <attr name="android:icon" format="reference" />
     </declare-styleable>
-
-    <declare-styleable name="AmountInput">
-        <attr name="android:gravity" />
-    </declare-styleable>
 </resources>

@@ -88,7 +88,9 @@ class SwapAmountViewModel(
         viewModelScope.launch {
             while (!swapRepository.hasCachedData()) {
                 swapRepository.getCachedOrLoadRemoteTokens()
-                delay(5.seconds)
+                if (!swapRepository.hasCachedData()) {
+                    delay(5.seconds)
+                }
             }
             checkInit()
         }
@@ -139,6 +141,7 @@ class SwapAmountViewModel(
     }
 
     fun onSourceChanged(contractAddress: String) {
+        initCompleted = true
         if (srcToken?.contractAddress == contractAddress) {
             return
         }
@@ -206,6 +209,7 @@ class SwapAmountViewModel(
     }
 
     fun onDestinationChanged(contractAddress: String) {
+        initCompleted = true
         if (dstToken?.contractAddress == contractAddress) {
             return
         }

@@ -87,33 +87,44 @@
                     app:barrierMargin="@dimen/offsetSmall"
                     app:constraint_referenced_ids="captionSend,srcBalance" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/srcValue"
+                <FrameLayout
+                    android:id="@+id/srcValueContainer"
                     android:layout_width="0dp"
-                    android:layout_height="48.76dp"
-                    android:layout_marginStart="@dimen/offsetSmall"
-                    android:background="@null"
-                    android:fontFamily="@font/montserrat_semi_bold"
-                    android:gravity="center_vertical|end"
-                    android:singleLine="true"
-                    android:textColor="?attr/textPrimaryColor"
-                    android:textCursorDrawable="@drawable/cursor"
-                    android:textSize="40sp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/offsetSmall"
+                    android:paddingBottom="12dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/srcTokenContainer"
-                    app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier"
-                    tools:text="14,787.32" />
+                    app:layout_constraintTop_toBottomOf="@+id/srcHeaderBarrier">
+
+                    <com.tonapps.tonkeeper.ui.screen.swap.view.AutoSizeAmountInput
+                        android:id="@+id/srcValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginStart="@dimen/offsetSmall"
+                        android:background="@null"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/montserrat_semi_bold"
+                        android:singleLine="true"
+                        android:textColor="?attr/textPrimaryColor"
+                        android:textSize="28sp"
+                        tools:text="14,787.32" />
+                </FrameLayout>
 
                 <uikit.widget.RowLayout
                     android:id="@+id/srcTokenContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_button_tertiary"
                     android:padding="@dimen/offsetExtraSmall"
-                    app:layout_constraintBottom_toBottomOf="@id/srcValue"
+                    app:layout_constraintBottom_toBottomOf="@id/srcValueContainer"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/srcValue">
+                    app:layout_constraintTop_toTopOf="@+id/srcValueContainer">
 
                     <uikit.widget.FrescoView
                         android:id="@+id/srcTokenIcon"
@@ -193,33 +204,46 @@
                         app:barrierMargin="@dimen/offsetSmall"
                         app:constraint_referenced_ids="captionReceive,dstBalance" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/dstValue"
+                    <FrameLayout
+                        android:id="@+id/dstValueContainer"
                         android:layout_width="0dp"
-                        android:layout_height="48.76dp"
-                        android:layout_marginStart="@dimen/offsetSmall"
-                        android:background="@null"
-                        android:fontFamily="@font/montserrat_semi_bold"
-                        android:gravity="center_vertical|end"
-                        android:singleLine="true"
-                        android:textColor="?attr/textPrimaryColor"
-                        android:textCursorDrawable="@drawable/cursor"
-                        android:textSize="40sp"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/offsetSmall"
+                        android:paddingBottom="12dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/dstTokenContainer"
-                        app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier"
-                        tools:text="6,010.01" />
+                        app:layout_constraintTop_toBottomOf="@+id/dstHeaderBarrier">
+
+                        <com.tonapps.tonkeeper.ui.screen.swap.view.AutoSizeAmountInput
+                            android:id="@+id/dstValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|end"
+                            android:layout_marginStart="@dimen/offsetSmall"
+                            android:background="@null"
+                            android:clickable="false"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:fontFamily="@font/montserrat_semi_bold"
+                            android:gravity="center_vertical|end"
+                            android:singleLine="true"
+                            android:textColor="?attr/textPrimaryColor"
+                            android:textSize="28sp"
+                            tools:text="6,010.01" />
+
+                    </FrameLayout>
 
                     <uikit.widget.RowLayout
                         android:id="@+id/dstTokenContainer"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@drawable/bg_button_tertiary"
                         android:padding="@dimen/offsetExtraSmall"
-                        app:layout_constraintBottom_toBottomOf="@id/dstValue"
+                        app:layout_constraintBottom_toBottomOf="@id/dstValueContainer"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/dstValue">
+                        app:layout_constraintTop_toTopOf="@+id/dstValueContainer">
 
                         <uikit.widget.FrescoView
                             android:id="@+id/dstTokenIcon"

@@ -307,10 +307,22 @@ fun View.gone() {
     visibility = View.GONE
 }
 
+fun View.isGone(): Boolean {
+    return visibility == View.GONE
+}
+
 fun View.visible() {
     visibility = View.VISIBLE
 }
 
+fun View.isVisible(): Boolean {
+    return visibility == View.VISIBLE
+}
+
 fun View.invisible() {
     visibility = View.INVISIBLE
+}
+
+fun View.isInvisible(): Boolean {
+    return visibility == View.INVISIBLE
 }

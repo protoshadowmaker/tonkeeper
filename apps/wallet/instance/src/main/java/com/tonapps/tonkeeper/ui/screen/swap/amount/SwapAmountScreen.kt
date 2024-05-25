@@ -8,11 +8,11 @@ import android.widget.Button
 import android.widget.TextView
 import com.tonapps.blockchain.Coin
 import com.tonapps.tonkeeper.extensions.toast
-import com.tonapps.tonkeeper.fragment.send.view.AmountInput
 import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapArgs
 import com.tonapps.tonkeeper.ui.screen.swap.confirm.ConfirmSwapScreen
 import com.tonapps.tonkeeper.ui.screen.swap.search.SearchSwapTokenScreen
 import com.tonapps.tonkeeper.ui.screen.swap.settings.SwapSettingsScreen
+import com.tonapps.tonkeeper.ui.screen.swap.view.AutoSizeAmountInput
 import com.tonapps.tonkeeper.view.LineInfoSimpleView
 import com.tonapps.tonkeeperx.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,6 +23,8 @@ import uikit.extensions.applyBottomNavigationInsets
 import uikit.extensions.collectFlow
 import uikit.extensions.gone
 import uikit.extensions.invisible
+import uikit.extensions.isGone
+import uikit.extensions.isVisible
 import uikit.extensions.visible
 import uikit.extensions.withAnimation
 import uikit.navigation.Navigation.Companion.navigation
@@ -43,12 +45,12 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private val srcTokenContainer: View by lazy { requireView().findViewById(R.id.srcTokenContainer) }
     private val srcTokenTextView: TextView by lazy { requireView().findViewById(R.id.srcToken) }
     private val srcTokenIcon: FrescoView by lazy { requireView().findViewById(R.id.srcTokenIcon) }
-    private val srcValueInput: AmountInput by lazy { requireView().findViewById(R.id.srcValue) }
+    private val srcValueInput: AutoSizeAmountInput by lazy { requireView().findViewById(R.id.srcValue) }
     private val dstBalanceTextView: TextView by lazy { requireView().findViewById(R.id.dstBalance) }
     private val dstTokenContainer: View by lazy { requireView().findViewById(R.id.dstTokenContainer) }
     private val dstTokenTextView: TextView by lazy { requireView().findViewById(R.id.dstToken) }
     private val dstTokenIcon: FrescoView by lazy { requireView().findViewById(R.id.dstTokenIcon) }
-    private val dstValueInput: AmountInput by lazy { requireView().findViewById(R.id.dstValue) }
+    private val dstValueInput: AutoSizeAmountInput by lazy { requireView().findViewById(R.id.dstValue) }
 
     private val swapInfoContainer: View by lazy { requireView().findViewById(R.id.swapInfoContainer) }
     private val rate: LineInfoSimpleView by lazy { requireView().findViewById(R.id.rate) }
@@ -240,8 +242,8 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
 
     private fun onSwapInfoStateChanged(state: SwapInfoState?) {
         if (state == null) {
-            post {
-                withAnimation(duration = ANIMATION_DURATION) { swapInfoContainer.gone() }
+            if (!swapInfoContainer.isGone()) {
+                post { withAnimation(duration = ANIMATION_DURATION) { swapInfoContainer.gone() } }
             }
             return
         }
@@ -257,8 +259,8 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         blockchainFee.value = state.blockchainFee
         route.value = state.route
         provider.value = state.provider
-        post {
-            withAnimation(duration = ANIMATION_DURATION) { swapInfoContainer.visible() }
+        if (!swapInfoContainer.isVisible()) {
+            post { withAnimation(duration = ANIMATION_DURATION) { swapInfoContainer.visible() } }
         }
     }
 
@@ -291,7 +293,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
         }
     }
 
-    private fun AmountInput.getValue(): String {
+    private fun AutoSizeAmountInput.getValue(): String {
         return Coin.prepareValue(text.toString())
     }
 
