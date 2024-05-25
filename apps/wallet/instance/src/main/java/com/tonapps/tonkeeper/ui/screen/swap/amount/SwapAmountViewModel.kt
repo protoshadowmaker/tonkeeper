@@ -338,7 +338,8 @@ class SwapAmountViewModel(
                 symbol = token.symbol,
                 address = token.contractAddress,
                 iconUri = token.iconUri,
-                balanceFormat = balanceFormat
+                balanceFormat = balanceFormat,
+                decimalCount = token.decimals
             )
         }
     }

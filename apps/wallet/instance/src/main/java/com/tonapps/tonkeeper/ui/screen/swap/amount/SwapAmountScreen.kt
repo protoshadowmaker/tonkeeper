@@ -195,6 +195,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private fun onSrcTokenStateChanged(state: TokenState, updateValue: Boolean) {
         srcTokenTextView.text = state.symbol
         srcValueInput.isEnabled = state.selected
+        srcValueInput.setDecimalCount(state.decimalCount)
         if (state.selected) {
             srcTokenIcon.setImageURI(state.iconUri)
             srcTokenIcon.visible()
@@ -220,6 +221,7 @@ class SwapAmountScreen : BaseFragment(R.layout.fragment_swap_amount), BaseFragme
     private fun onDstTokenStateChanged(state: TokenState, updateValue: Boolean) {
         dstTokenTextView.text = state.symbol
         dstValueInput.isEnabled = state.selected
+        dstValueInput.setDecimalCount(state.decimalCount)
         if (state.selected) {
             dstTokenIcon.setImageURI(state.iconUri)
             dstTokenIcon.visible()

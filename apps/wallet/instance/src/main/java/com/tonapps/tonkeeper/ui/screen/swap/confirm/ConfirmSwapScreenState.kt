@@ -22,7 +22,8 @@ data class ConfirmTokenState(
     val symbol: CharSequence,
     val iconUri: Uri,
     val walletCurrencyAmountFormat: CharSequence,
-    val amountFormat: CharSequence
+    val amountFormat: CharSequence,
+    val decimalCount: Int
 )
 
 data class ConfirmSwapInfoState(

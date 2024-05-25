@@ -16,7 +16,8 @@ data class TokenState(
     val address: CharSequence? = null,
     val iconUri: Uri? = null,
     val balanceFormat: CharSequence? = null,
-    val amountFormat: CharSequence = "0"
+    val amountFormat: CharSequence = "0",
+    val decimalCount: Int = 0
 )
 
 data class SwapInfoState(

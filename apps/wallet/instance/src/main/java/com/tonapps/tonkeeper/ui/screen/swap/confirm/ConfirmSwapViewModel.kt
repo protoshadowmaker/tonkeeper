@@ -94,7 +94,8 @@ class ConfirmSwapViewModel(
             symbol = token.symbol,
             iconUri = token.iconUri,
             amountFormat = token.formatCoins(amount),
-            walletCurrencyAmountFormat = walletCurrencyAmountFormat
+            walletCurrencyAmountFormat = walletCurrencyAmountFormat,
+            decimalCount = token.decimals
         )
     }
 

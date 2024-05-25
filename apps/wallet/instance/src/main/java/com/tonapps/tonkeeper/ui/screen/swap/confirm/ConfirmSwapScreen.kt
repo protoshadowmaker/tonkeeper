@@ -7,11 +7,13 @@ import android.widget.TextView
 import com.tonapps.tonkeeper.extensions.toast
 import com.tonapps.tonkeeper.sign.SignRequestEntity
 import com.tonapps.tonkeeper.ui.screen.root.RootViewModel
+import com.tonapps.tonkeeper.ui.screen.swap.view.AutoSizeAmountInput
 import com.tonapps.tonkeeper.view.LineInfoSimpleView
 import com.tonapps.tonkeeperx.R
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
+import uikit.drawable.FooterDrawable
 import uikit.extensions.applyBottomNavigationInsets
 import uikit.extensions.collectFlow
 import uikit.extensions.gone
@@ -34,11 +36,11 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
     private val srcBalanceTextView: TextView by lazy { requireView().findViewById(R.id.srcBalance) }
     private val srcTokenTextView: TextView by lazy { requireView().findViewById(R.id.srcToken) }
     private val srcTokenIcon: FrescoView by lazy { requireView().findViewById(R.id.srcTokenIcon) }
-    private val srcValueTextView: TextView by lazy { requireView().findViewById(R.id.srcValue) }
+    private val srcValueTextView: AutoSizeAmountInput by lazy { requireView().findViewById(R.id.srcValue) }
     private val dstBalanceTextView: TextView by lazy { requireView().findViewById(R.id.dstBalance) }
     private val dstTokenTextView: TextView by lazy { requireView().findViewById(R.id.dstToken) }
     private val dstTokenIcon: FrescoView by lazy { requireView().findViewById(R.id.dstTokenIcon) }
-    private val dstValueTextView: TextView by lazy { requireView().findViewById(R.id.dstValue) }
+    private val dstValueTextView: AutoSizeAmountInput by lazy { requireView().findViewById(R.id.dstValue) }
 
     private val priceImpact: LineInfoSimpleView by lazy { requireView().findViewById(R.id.priceImpact) }
     private val minimumReceived: LineInfoSimpleView by lazy { requireView().findViewById(R.id.minimumReceived) }
@@ -52,6 +54,7 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
     private val cancel: Button by lazy { requireView().findViewById(R.id.cancel) }
     private val confirm: Button by lazy { requireView().findViewById(R.id.confirm) }
     private val loader: LoaderView by lazy { requireView().findViewById(R.id.confirmLoader) }
+    private val swapInfoContainer: View by lazy { requireView().findViewById(R.id.swapInfoContainer) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -73,6 +76,7 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         providerFee.setOnClickListener {
             navigation?.toast(getString(com.tonapps.wallet.localization.R.string.liquidity_provider_fee_info))
         }
+        swapInfoContainer.background = FooterDrawable(requireContext()).apply { setDivider(true) }
         collectFlow(viewModel.uiStateFlow) { state ->
             when (state) {
                 is ConfirmSwapScreenState.Init -> {}
@@ -141,14 +145,16 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         srcBalanceTextView.text = state.walletCurrencyAmountFormat
         srcTokenTextView.text = state.symbol
         srcTokenIcon.setImageURI(state.iconUri)
-        srcValueTextView.text = state.amountFormat
+        srcValueTextView.setText(state.amountFormat)
+        srcValueTextView.setDecimalCount(state.decimalCount)
     }
 
     private fun onDstConfirmTokenStateChanged(state: ConfirmTokenState) {
         dstBalanceTextView.text = state.walletCurrencyAmountFormat
         dstTokenTextView.text = state.symbol
         dstTokenIcon.setImageURI(state.iconUri)
-        dstValueTextView.text = state.amountFormat
+        dstValueTextView.setText(state.amountFormat)
+        dstValueTextView.setDecimalCount(state.decimalCount)
     }
 
     private fun onConfirmSwapInfoStateChanged(state: ConfirmSwapInfoState) {
