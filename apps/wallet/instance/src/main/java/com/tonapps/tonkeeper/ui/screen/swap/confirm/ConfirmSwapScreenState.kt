@@ -21,7 +21,7 @@ sealed class ConfirmSwapScreenState {
 data class ConfirmTokenState(
     val symbol: CharSequence,
     val iconUri: Uri,
-    val fiatBalanceFormat: CharSequence,
+    val walletCurrencyAmountFormat: CharSequence,
     val amountFormat: CharSequence
 )
 

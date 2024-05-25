@@ -36,6 +36,7 @@ class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFr
         slippageInput.disableClearButton = true
         saveButton.applyBottomInsets()
         collectFlow(viewModel.uiStateFlow) {
+            slippageInput.isEnabled = it.slippageExpert
             if (it.slippageExpert) {
                 expertMode.checked = true
                 slippageInput.text = it.slippageValue.toString()

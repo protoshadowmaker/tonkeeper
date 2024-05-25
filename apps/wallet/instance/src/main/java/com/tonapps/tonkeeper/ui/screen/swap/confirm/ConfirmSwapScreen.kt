@@ -138,14 +138,14 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
     }
 
     private fun onSrcConfirmTokenStateChanged(state: ConfirmTokenState) {
-        srcBalanceTextView.text = state.fiatBalanceFormat
+        srcBalanceTextView.text = state.walletCurrencyAmountFormat
         srcTokenTextView.text = state.symbol
         srcTokenIcon.setImageURI(state.iconUri)
         srcValueTextView.text = state.amountFormat
     }
 
     private fun onDstConfirmTokenStateChanged(state: ConfirmTokenState) {
-        dstBalanceTextView.text = state.fiatBalanceFormat
+        dstBalanceTextView.text = state.walletCurrencyAmountFormat
         dstTokenTextView.text = state.symbol
         dstTokenIcon.setImageURI(state.iconUri)
         dstValueTextView.text = state.amountFormat

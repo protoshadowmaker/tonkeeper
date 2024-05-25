@@ -4,26 +4,30 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tonapps.blockchain.Coin
 import com.tonapps.icu.CurrencyFormatter
-import com.tonapps.wallet.data.account.WalletRepository
+import com.tonapps.wallet.data.core.WalletCurrency
+import com.tonapps.wallet.data.rates.RatesRepository
+import com.tonapps.wallet.data.settings.SettingsRepository
 import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.swap.entity.SwapInfoEntity
 import com.tonapps.wallet.data.swap.entity.SwapRequestEntity
 import com.tonapps.wallet.data.swap.entity.SwapTokenEntity
-import com.tonapps.wallet.data.token.TokenRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.time.Duration.Companion.seconds
 
 class ConfirmSwapViewModel(
-    private val walletRepository: WalletRepository,
-    private val tokenRepository: TokenRepository,
-    private val swapRepository: SwapRepository
+    private val ratesRepository: RatesRepository,
+    private val swapRepository: SwapRepository,
+    private val settings: SettingsRepository
 ) : ViewModel() {
 
     private var swapRequest: SwapRequestEntity? = null
@@ -59,25 +63,38 @@ class ConfirmSwapViewModel(
 
     private fun buildConfirmSwapScreenState(
         processState: ProcessState,
-        confirmSwapInfoState: ConfirmSwapInfoState
+        confirmSwapInfoState: ConfirmSwapInfoState,
+        walletCurrencyAmountFormat: CharSequence = ""
     ): ConfirmSwapScreenState {
         val swapRequest = this.swapRequest ?: return ConfirmSwapScreenState.Error
         val srcToken = this.srcToken ?: return ConfirmSwapScreenState.Error
         val dstToken = this.dstToken ?: return ConfirmSwapScreenState.Error
         return ConfirmSwapScreenState.Data(
             processState = processState,
-            srcConfirmTokenState = buildConfirmTokenState(srcToken, swapRequest.srcAmount),
-            dstConfirmTokenState = buildConfirmTokenState(dstToken, swapRequest.dstAmount),
+            srcConfirmTokenState = buildConfirmTokenState(
+                srcToken,
+                swapRequest.srcAmount,
+                walletCurrencyAmountFormat
+            ),
+            dstConfirmTokenState = buildConfirmTokenState(
+                dstToken,
+                swapRequest.dstAmount,
+                walletCurrencyAmountFormat
+            ),
             confirmSwapInfo = confirmSwapInfoState
         )
     }
 
-    private fun buildConfirmTokenState(token: SwapTokenEntity, amount: Long): ConfirmTokenState {
+    private fun buildConfirmTokenState(
+        token: SwapTokenEntity,
+        amount: Long,
+        walletCurrencyAmountFormat: CharSequence
+    ): ConfirmTokenState {
         return ConfirmTokenState(
             symbol = token.symbol,
             iconUri = token.iconUri,
             amountFormat = token.formatCoins(amount),
-            fiatBalanceFormat = ""
+            walletCurrencyAmountFormat = walletCurrencyAmountFormat
         )
     }
 
@@ -171,30 +188,79 @@ class ConfirmSwapViewModel(
         val swapRequest = this.swapRequest ?: return
 
         swapRateJob = viewModelScope.launch {
-            val swapInfo = if (swapRequest.reverse) {
-                swapRepository.getReverseSwapInfo(
-                    offerAddress = swapRequest.fromTokenAddress,
-                    askAddress = swapRequest.toTokenAddress,
-                    units = swapRequest.dstAmount,
-                    slippageTolerance = swapRequest.slippageTolerance
-                )
-            } else {
-                swapRepository.getSwapInfo(
-                    offerAddress = swapRequest.fromTokenAddress,
-                    askAddress = swapRequest.toTokenAddress,
-                    units = swapRequest.srcAmount,
-                    slippageTolerance = swapRequest.slippageTolerance
-                )
-            }.getOrNull()
+            val swapInfoDeferrer = async { getMainSwapInfo(swapRequest) }
+            val toTonSwapRateDeferrer = async { getToTonSwapRate(swapRequest) }
+            val swapInfo = swapInfoDeferrer.await()
+            val toTonSwapRate = toTonSwapRateDeferrer.await()
             if (swapInfo != null) {
-                onSwapInfoLoaded(swapRequest, swapInfo)
+                val currency = settings.currency
+                val currencyValue = getCurrencyValue(currency, toTonSwapRate, swapInfo)
+                onSwapInfoLoaded(swapRequest, swapInfo, currency, currencyValue)
             }
             delay(5.seconds)
             loadSwapRate()
         }
     }
 
-    private fun onSwapInfoLoaded(swapRequest: SwapRequestEntity, swapInfo: SwapInfoEntity) {
+    private suspend fun getCurrencyValue(
+        currency: WalletCurrency,
+        toTonSwapRate: Float,
+        swapInfo: SwapInfoEntity
+    ): Float = withContext(Dispatchers.IO) {
+        val srcToken = this@ConfirmSwapViewModel.srcToken ?: return@withContext 0f
+        if (toTonSwapRate > 0f) {
+            val tonAmount =
+                Coin.toCoins(swapInfo.offerValue, srcToken.decimals) * toTonSwapRate
+            var rates = ratesRepository.getRates(currency, WalletCurrency.TON.code)
+            if (rates.isEmpty) {
+                ratesRepository.load(currency, WalletCurrency.TON.code)
+                rates = ratesRepository.getRates(currency, WalletCurrency.TON.code)
+            }
+            tonAmount * rates.getRate(WalletCurrency.TON.code)
+        } else {
+            0f
+        }
+    }
+
+    private suspend fun getMainSwapInfo(swapRequest: SwapRequestEntity): SwapInfoEntity? {
+        return if (swapRequest.reverse) {
+            swapRepository.getReverseSwapInfo(
+                offerAddress = swapRequest.fromTokenAddress,
+                askAddress = swapRequest.toTokenAddress,
+                units = swapRequest.dstAmount,
+                slippageTolerance = swapRequest.slippageTolerance
+            )
+        } else {
+            swapRepository.getSwapInfo(
+                offerAddress = swapRequest.fromTokenAddress,
+                askAddress = swapRequest.toTokenAddress,
+                units = swapRequest.srcAmount,
+                slippageTolerance = swapRequest.slippageTolerance
+            )
+        }.getOrNull()
+    }
+
+    private suspend fun getToTonSwapRate(swapRequest: SwapRequestEntity): Float {
+        val contractAddress = swapRequest.fromTokenAddress
+        val amount = swapRequest.srcAmount
+        return if (contractAddress == SwapTokenEntity.TON.contractAddress) {
+            return 1f
+        } else {
+            swapRepository.getSwapInfo(
+                offerAddress = contractAddress,
+                askAddress = SwapTokenEntity.TON.contractAddress,
+                units = amount,
+                slippageTolerance = 0.001f //0.1%
+            ).getOrNull()?.swapRate ?: 0f
+        }
+    }
+
+    private fun onSwapInfoLoaded(
+        swapRequest: SwapRequestEntity,
+        swapInfo: SwapInfoEntity,
+        currency: WalletCurrency,
+        currencyValue: Float
+    ) {
         this.swapRequest = swapRequest.copy(
             srcAmount = if (swapRequest.reverse) swapInfo.offerValue else swapRequest.srcAmount,
             dstAmount = if (swapRequest.reverse) swapRequest.dstAmount else swapInfo.askValue,
@@ -203,6 +269,11 @@ class ConfirmSwapViewModel(
         val state = state as? ConfirmSwapScreenState.Data ?: return
         val offerToken = srcToken ?: return
         val askToken = dstToken ?: return
+        val walletCurrencyAmountFormat = if (currencyValue > 0) {
+            CurrencyFormatter.formatFiat(currency.code, currencyValue)
+        } else {
+            ""
+        }
         prepareAndSubmitDataToUi(
             buildConfirmSwapScreenState(
                 state.processState,
@@ -210,7 +281,8 @@ class ConfirmSwapViewModel(
                     offerToken = offerToken,
                     askToken = askToken,
                     swapInfo = swapInfo
-                )
+                ),
+                walletCurrencyAmountFormat
             )
         )
     }
