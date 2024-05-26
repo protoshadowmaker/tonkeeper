@@ -47,6 +47,7 @@ import com.tonapps.wallet.data.core.ScreenCacheSource
 import com.tonapps.wallet.data.core.Theme
 import com.tonapps.wallet.data.core.WalletCurrency
 import com.tonapps.wallet.data.settings.SettingsRepository
+import com.tonapps.wallet.data.swap.SwapRepository
 import com.tonapps.wallet.data.token.TokenRepository
 import com.tonapps.wallet.data.tonconnect.TonConnectRepository
 import com.tonapps.wallet.data.tonconnect.entities.DAppEntity
@@ -83,6 +84,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import uikit.extensions.collectFlow
 import uikit.navigation.Navigation.Companion.navigation
+import kotlin.time.Duration.Companion.seconds
 
 class RootViewModel(
     application: Application,
@@ -96,7 +98,8 @@ class RootViewModel(
     private val screenCacheSource: ScreenCacheSource,
     private val walletAdapter: WalletAdapter,
     private val walletPickerAdapter: WalletPickerAdapter,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val swapRepository: SwapRepository,
 ): AndroidViewModel(application) {
 
     data class Passcode(
@@ -158,6 +161,17 @@ class RootViewModel(
         collectFlow(walletRepository.activeWalletFlow, ::applyAnalyticsKeys)
 
         combine(walletRepository.activeWalletFlow, walletRepository.walletsFlow, ::initShortcuts).flowOn(Dispatchers.IO).launchIn(viewModelScope)
+
+        preloadSwapInfo()
+    }
+
+    private fun preloadSwapInfo() {
+        viewModelScope.launch {
+            while (!swapRepository.hasCachedData()) {
+                swapRepository.getCachedOrLoadRemoteTokens()
+                delay(5.seconds)
+            }
+        }
     }
 
     private suspend fun initShortcuts(
