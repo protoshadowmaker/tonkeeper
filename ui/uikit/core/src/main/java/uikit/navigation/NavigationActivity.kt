@@ -168,6 +168,28 @@ abstract class NavigationActivity: BaseActivity(), Navigation, ViewTreeObserver.
         }
     }
 
+    override fun toRoot() {
+        val fragments = supportFragmentManager.fragments
+            .filter { it != supportFragmentManager.primaryNavigationFragment }
+            .reversed()
+            .mapNotNull { it as? BaseFragment }
+
+        var backConsumed = false
+        val fragmentsToRemove = mutableListOf<BaseFragment>()
+        fragments.forEach {
+            if (!backConsumed && !it.onBackPressed()) {
+                backConsumed = true
+            } else {
+                fragmentsToRemove.add(it)
+            }
+        }
+        supportFragmentManager.commit {
+            fragmentsToRemove.forEach { fragment ->
+                remove(fragment)
+            }
+        }
+    }
+
     private fun clearBackStack() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)

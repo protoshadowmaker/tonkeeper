@@ -6,6 +6,7 @@ import uikit.widget.webview.bridge.JsBridge
 
 class ConfirmSwapBridge(
     val sendTransaction: suspend (request: SignRequestEntity) -> String?,
+    val sendTransactionCompleted: () -> Unit,
     val sendTransactionErrorCallback: (e: Throwable) -> Unit,
     val sendTransactionWebErrorCallback: (e: Throwable) -> Unit,
 ) : JsBridge("tonkeeperStonfi") {
@@ -22,6 +23,7 @@ class ConfirmSwapBridge(
             val request = SignRequestEntity(args.getJSONObject(0))
             try {
                 sendTransaction(request)
+                sendTransactionCompleted()
             } catch (e: Throwable) {
                 sendTransactionErrorCallback(e)
             }

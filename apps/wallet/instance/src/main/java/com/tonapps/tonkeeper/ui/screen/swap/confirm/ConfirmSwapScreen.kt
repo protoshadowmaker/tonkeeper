@@ -1,15 +1,19 @@
 package com.tonapps.tonkeeper.ui.screen.swap.confirm
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.tonapps.tonkeeper.extensions.toast
 import com.tonapps.tonkeeper.sign.SignRequestEntity
 import com.tonapps.tonkeeper.ui.screen.root.RootViewModel
 import com.tonapps.tonkeeper.ui.screen.swap.view.AutoSizeAmountInput
 import com.tonapps.tonkeeper.view.LineInfoSimpleView
 import com.tonapps.tonkeeperx.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
@@ -23,6 +27,7 @@ import uikit.widget.FrescoView
 import uikit.widget.LoaderView
 import uikit.widget.ModalHeader
 import uikit.widget.webview.bridge.BridgeWebView
+import kotlin.time.Duration.Companion.seconds
 
 class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFragment.BottomSheet {
 
@@ -64,6 +69,7 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         webView.loadUrl("file:///android_asset/swap/index.html")
         webView.jsBridge = ConfirmSwapBridge(
             sendTransaction = ::sing,
+            sendTransactionCompleted = ::onSendCompleted,
             sendTransactionErrorCallback = ::onSignCancelled,
             sendTransactionWebErrorCallback = ::onWebError
         )
@@ -171,6 +177,14 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         request: SignRequestEntity
     ): String {
         return rootViewModel.requestSign(requireContext(), request)
+    }
+
+    private fun onSendCompleted() {
+        rootViewModel.processDeepLink(Uri.parse("tonkeeper://activity"), false)
+        lifecycleScope.launch {
+            delay(1.seconds)
+            navigation?.toRoot()
+        }
     }
 
     private fun onSignCancelled(e: Throwable) {
