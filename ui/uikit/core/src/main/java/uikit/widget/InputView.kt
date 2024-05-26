@@ -311,6 +311,10 @@ class InputView @JvmOverloads constructor(
         val editTextTranslationY: Float,
     )
 
+    fun addTextChangedListener(watcher: TextWatcher) {
+        this.editText.addTextChangedListener(watcher)
+    }
+
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
     }

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import com.tonapps.icu.CurrencyFormatter
+import com.tonapps.tonkeeper.ui.screen.swap.watcher.DecimalInputWatcher
 import com.tonapps.tonkeeperx.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uikit.base.BaseFragment
@@ -26,6 +28,11 @@ class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFr
     private val slippage5: Button by lazy { requireView().findViewById(R.id.slippage5) }
     private val expertMode: SwitchView by lazy { requireView().findViewById(R.id.expertMode) }
 
+    private val textWatcher = DecimalInputWatcher().apply {
+        decimalCount = 1
+        maxValue = 50.0
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         headerView.onCloseClick = {
@@ -34,12 +41,17 @@ class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFr
         slippageInput.inputType =
             EditorInfo.TYPE_CLASS_NUMBER or EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
         slippageInput.disableClearButton = true
+        slippageInput.addTextChangedListener(textWatcher)
         saveButton.applyBottomInsets()
         collectFlow(viewModel.uiStateFlow) {
             slippageInput.isEnabled = it.slippageExpert
             if (it.slippageExpert) {
                 expertMode.checked = true
-                slippageInput.text = it.slippageValue.toString()
+                slippageInput.text = CurrencyFormatter.format(
+                    value = it.slippageValue,
+                    decimals = 0..1,
+                    group = false
+                ).toString()
                 initListeners()
             } else {
                 initListeners()

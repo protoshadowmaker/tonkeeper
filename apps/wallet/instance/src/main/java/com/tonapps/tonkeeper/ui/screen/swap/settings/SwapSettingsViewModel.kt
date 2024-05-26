@@ -29,7 +29,9 @@ class SwapSettingsViewModel(
         initJob = combine(
             settingsRepository.slippageValueFlow,
             settingsRepository.slippageExpertFlow
-        ) { slippageValue, slippageExpert ->
+        ) { settingsSlippageValue, settingsSlippageExpert ->
+            slippageValue = settingsSlippageValue
+            slippageExpert = settingsSlippageExpert
             _uiStateFlow.tryEmit(SwapSettingsScreenState(slippageValue, slippageExpert))
             initJob?.cancel()
         }.launchIn(viewModelScope)
