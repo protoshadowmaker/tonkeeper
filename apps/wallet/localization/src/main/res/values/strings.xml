@@ -101,6 +101,7 @@
     <string name="buy_or_sell">Buy or sell</string>
     <string name="fiat_open_description">You are opening an external app not operated by Tonkeeper.</string>
     <string name="buy">Buy</string>
+    <string name="sell">Sell</string>
     <string name="search">Search</string>
     <string name="add_wallet">Add wallet</string>
     <string name="wallets">Wallets</string>
@@ -320,4 +321,7 @@
     <string name="expert_mode_description">Allows high price impact trades. Use at your own risk.</string>
     <string name="suggested">Suggested</string>
     <string name="other">Other</string>
+    <string name="payment_method_credit">Credit Card</string>
+    <string name="payment_method_credit_rub">Credit Card  ·  RUB</string>
+    <string name="payment_method_crypto">Cryptocurrency</string>
 </resources>

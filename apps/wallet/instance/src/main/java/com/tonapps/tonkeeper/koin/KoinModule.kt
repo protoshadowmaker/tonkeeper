@@ -20,6 +20,7 @@ import com.tonapps.tonkeeper.ui.screen.browser.dapp.DAppViewModel
 import com.tonapps.tonkeeper.ui.screen.browser.explore.BrowserExploreViewModel
 import com.tonapps.tonkeeper.ui.screen.browser.main.BrowserMainViewModel
 import com.tonapps.tonkeeper.ui.screen.browser.search.BrowserSearchViewModel
+import com.tonapps.tonkeeper.ui.screen.buysell.amount.BuySellAmountViewModel
 import com.tonapps.tonkeeper.ui.screen.collectibles.CollectiblesViewModel
 import com.tonapps.tonkeeper.ui.screen.dialog.encrypted.EncryptedCommentViewModel
 import com.tonapps.tonkeeper.ui.screen.events.EventsViewModel
@@ -95,6 +96,7 @@ val koinModel = module {
     viewModel { SwapAmountViewModel(get(), get(), get(), get(), get()) }
     viewModel { ConfirmSwapViewModel(get(), get(), get()) }
     viewModel { SwapSettingsViewModel(get()) }
+    viewModel { BuySellAmountViewModel(get()) }
 
     viewModel { ConfirmScreenFeature(get(), get(), get(), get(), get()) }
     viewModel { AmountScreenFeature(get(), get(), get()) }
