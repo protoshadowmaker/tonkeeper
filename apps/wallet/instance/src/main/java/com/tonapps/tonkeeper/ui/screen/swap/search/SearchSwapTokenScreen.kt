@@ -45,6 +45,10 @@ class SearchSwapTokenScreen : BaseFragment(R.layout.fragment_swap_search),
     private val suggestionList: SimpleRecyclerView by lazy { requireView().findViewById(R.id.suggestionList) }
     private val suggestedContainer: View by lazy { requireView().findViewById(R.id.suggestedContainer) }
 
+    override fun isAllowParentTransform(): Boolean {
+        return false
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

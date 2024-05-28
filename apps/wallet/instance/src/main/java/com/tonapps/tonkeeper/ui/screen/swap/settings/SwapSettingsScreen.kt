@@ -33,6 +33,10 @@ class SwapSettingsScreen : BaseFragment(R.layout.fragment_swap_settings), BaseFr
         maxValue = 50.0
     }
 
+    override fun isAllowParentTransform(): Boolean {
+        return false
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         headerView.onCloseClick = {

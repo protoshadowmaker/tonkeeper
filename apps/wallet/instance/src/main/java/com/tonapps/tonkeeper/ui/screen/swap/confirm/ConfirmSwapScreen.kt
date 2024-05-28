@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.tonapps.tonkeeper.extensions.toast
+import com.tonapps.tonkeeper.koin.api
 import com.tonapps.tonkeeper.sign.SignRequestEntity
 import com.tonapps.tonkeeper.ui.screen.root.RootViewModel
 import com.tonapps.tonkeeper.ui.screen.swap.view.AutoSizeAmountInput
@@ -61,6 +62,12 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
     private val loader: LoaderView by lazy { requireView().findViewById(R.id.confirmLoader) }
     private val swapInfoContainer: View by lazy { requireView().findViewById(R.id.swapInfoContainer) }
 
+    private var navigationToRoot: Boolean = false
+
+    override fun isAllowParentTransform(): Boolean {
+        return navigationToRoot
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         root.applyBottomNavigationInsets()
@@ -68,6 +75,7 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         cancel.setOnClickListener { finish() }
         webView.loadUrl("file:///android_asset/swap/index.html")
         webView.jsBridge = ConfirmSwapBridge(
+            stonApiKey = requireContext().api?.config?.stonApiKey ?: "",
             sendTransaction = ::sing,
             sendTransactionCompleted = ::onSendCompleted,
             sendTransactionErrorCallback = ::onSignCancelled,
@@ -183,6 +191,7 @@ class ConfirmSwapScreen : BaseFragment(R.layout.fragment_swap_confirm), BaseFrag
         rootViewModel.processDeepLink(Uri.parse("tonkeeper://activity"), false)
         lifecycleScope.launch {
             delay(1.seconds)
+            navigationToRoot = true
             navigation?.toRoot()
         }
     }
