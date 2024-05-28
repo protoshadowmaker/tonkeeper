@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swapTokensRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <uikit.widget.ColumnLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <uikit.widget.ModalHeader
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_token"
+            app:ignoreSystemOffset="true" />
+
+        <uikit.widget.SearchInput
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search"
+            android:paddingHorizontal="@dimen/offsetMedium" />
+
+        <uikit.widget.ColumnLayout
+            android:id="@+id/suggestedContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/suggestedHeader"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lineInfoHeight"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/offsetMedium"
+                android:text="@string/suggested"
+                android:textAppearance="@style/TextAppearance.Label1"
+                android:textColor="?attr/textPrimaryColor" />
+
+            <uikit.widget.SimpleRecyclerView
+                android:id="@+id/suggestionList"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lineInfoCompactHeight"
+                android:layout_marginBottom="@dimen/offsetMedium"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/offsetMedium"
+                tools:listitem="@layout/view_cell_jetton_compact" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/otherHeader"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lineInfoHeight"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/offsetMedium"
+                android:text="@string/other"
+                android:textAppearance="@style/TextAppearance.Label1"
+                android:textColor="?attr/textPrimaryColor" />
+        </uikit.widget.ColumnLayout>
+    </uikit.widget.ColumnLayout>
+
+    <uikit.widget.SimpleRecyclerView
+        android:id="@+id/list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/offsetMedium"
+        android:paddingHorizontal="@dimen/offsetMedium"
+        app:layout_constraintBottom_toTopOf="@id/actionContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        tools:listitem="@layout/view_cell_jetton" />
+
+    <FrameLayout
+        android:id="@+id/actionContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/offsetMedium"
+        android:paddingBottom="@dimen/offsetMedium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/closeButton"
+            style="@style/Widget.App.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/close"
+            android:textAppearance="@style/TextAppearance.Label1" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

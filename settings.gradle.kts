@@ -25,6 +25,7 @@ include(":baselineprofile:signer")
 include(":ton")
 include(":core")
 include(":tonapi")
+include(":stonapi")
 
 
 include(":ui:shimmer")
@@ -58,3 +59,4 @@ include(":apps:wallet:data:collectibles")
 include(":apps:wallet:data:tonconnect")
 include(":apps:wallet:data:push")
 include(":apps:wallet:data:browser")
+include(":apps:wallet:data:swap")

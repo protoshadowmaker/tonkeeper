@@ -1,15 +1,6 @@
 package com.tonapps.icu
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.ImageSpan
 import android.util.ArrayMap
-import android.util.Log
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -78,12 +69,13 @@ object CurrencyFormatter {
 
     private fun formatFloat(
         value: Float,
-        decimals: Int,
+        decimals: IntRange,
+        group: Boolean = true
     ): String {
         if (0f >= value) {
             return "0"
         }
-        return getFormat(decimals).format(value)
+        return getFormat(decimals, group).format(value)
     }
 
     fun format(
@@ -91,7 +83,16 @@ object CurrencyFormatter {
         value: Float,
         decimals: Int,
     ): CharSequence {
-        val amount = formatFloat(value, decimals)
+        return format(currency, value, decimals..decimals)
+    }
+
+    fun format(
+        currency: String = "",
+        value: Float,
+        decimals: IntRange,
+        group: Boolean = true
+    ): CharSequence {
+        val amount = formatFloat(value, decimals, group)
         return format(currency, amount)
     }
 
@@ -100,7 +101,7 @@ object CurrencyFormatter {
         value: BigInteger,
         decimals: Int
     ): CharSequence {
-        val amount = getFormat(decimals).format(value)
+        val amount = getFormat(decimals..decimals).format(value)
         return format(currency, amount)
     }
 
@@ -114,6 +115,15 @@ object CurrencyFormatter {
 
     fun format(
         currency: String = "",
+        value: Double,
+    ): CharSequence {
+        val floatValue = value.toFloat()
+        val decimals = decimalCount(floatValue)
+        return format(currency, floatValue, decimals)
+    }
+
+    fun format(
+        currency: String = "",
         value: BigInteger
     ): CharSequence {
         var bigDecimal = value.toBigDecimal().stripTrailingZeros()
@@ -121,7 +131,17 @@ object CurrencyFormatter {
             bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_DOWN)
         }
         val decimals = bigDecimal.scale()
-        val amount = getFormat(decimals).format(value)
+        val amount = getFormat(decimals..decimals).format(value)
+        return format(currency, amount)
+    }
+
+    fun format(
+        currency: String = "",
+        value: BigDecimal,
+        decimals: IntRange,
+        group: Boolean = true
+    ): CharSequence {
+        val amount = getFormat(decimals, group).format(value)
         return format(currency, amount)
     }
 
@@ -134,7 +154,7 @@ object CurrencyFormatter {
             bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_DOWN)
         }
         val decimals = bigDecimal.scale()
-        val amount = getFormat(decimals).format(value)
+        val amount = getFormat(decimals..decimals).format(value)
         return format(currency, amount)
     }
 
@@ -198,40 +218,35 @@ object CurrencyFormatter {
         return 2
     }
 
-    private fun getFormat(decimals: Int): DecimalFormat {
-        val key = cacheKey(decimals)
+    private fun getFormat(decimals: IntRange, group: Boolean = true): DecimalFormat {
+        val key = cacheKey(decimals, group)
         var format = cache[key]
         if (format == null) {
-            format = createFormat(decimals)
+            format = createFormat(decimals, group)
             cache[key] = format
         }
         return format
     }
 
-    private fun cacheKey(decimals: Int): String {
-        return decimals.toString()
+    private fun cacheKey(decimals: IntRange, group: Boolean): String {
+        return "$decimals-$group"
     }
 
-    private fun createFormat(decimals: Int): DecimalFormat {
+    private fun createFormat(decimals: IntRange, group: Boolean): DecimalFormat {
         val decimalFormat = DecimalFormat(pattern)
-        decimalFormat.maximumFractionDigits = decimals
-        decimalFormat.minimumFractionDigits = decimals
-        decimalFormat.groupingSize = 3
-        decimalFormat.isGroupingUsed = true
+        decimalFormat.maximumFractionDigits = decimals.last
+        decimalFormat.minimumFractionDigits = decimals.first
+        if (group) {
+            decimalFormat.groupingSize = 3
+        }
+        decimalFormat.isGroupingUsed = group
         return decimalFormat
     }
 
     private fun removeTrailingZeros(value: String): String {
-        if (true) {
-            return value
-        }
         if (!value.contains(monetaryDecimalSeparator)) {
             return value
         }
-        val fixed = value.replace(Regex("${monetaryDecimalSeparator}?0+$"), "")
-        if (fixed.endsWith(monetaryDecimalSeparator)) {
-            return fixed.removeSuffix(monetaryDecimalSeparator)
-        }
-        return fixed
+        return value.removeSuffix("0").removeSuffix(monetaryDecimalSeparator)
     }
 }

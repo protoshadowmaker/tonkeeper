@@ -16,9 +16,14 @@ open class SimpleRecyclerView @JvmOverloads constructor(
     private var maxHeight: Int = 0
 
     init {
-        layoutManager = LinearLayoutManager(context, VERTICAL, false)
         context.useAttributes(attrs, R.styleable.SimpleRecyclerView) {
-            maxHeight = it.getDimensionPixelSize(R.styleable.SimpleRecyclerView_android_maxHeight, 0)
+            layoutManager = LinearLayoutManager(
+                context,
+                it.getInt(R.styleable.SimpleRecyclerView_android_orientation, VERTICAL),
+                false
+            )
+            maxHeight =
+                it.getDimensionPixelSize(R.styleable.SimpleRecyclerView_android_maxHeight, 0)
         }
     }
 

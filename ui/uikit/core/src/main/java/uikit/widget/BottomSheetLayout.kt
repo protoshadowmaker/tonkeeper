@@ -48,6 +48,7 @@ class BottomSheetLayout @JvmOverloads constructor(
     var doOnHide: (() -> Unit)? = null
     var doOnAnimationEnd: (() -> Unit)? = null
     var doOnDragging: (() -> Unit)? = null
+    var isAllowParentTransform: (() -> Boolean)? = null
     var fragment: Fragment? = null
 
     private val parentRootView: View? by lazy {
@@ -140,6 +141,9 @@ class BottomSheetLayout @JvmOverloads constructor(
     }
 
     private fun onAnimationUpdateParent(progress: Float) {
+        if (isAllowParentTransform?.invoke() == false) {
+            return
+        }
         val parentView = parentRootView ?: return
         val radius = context.getDimensionPixelSize(R.dimen.cornerMedium)
         parentView.roundTop(progress.range(0, radius))

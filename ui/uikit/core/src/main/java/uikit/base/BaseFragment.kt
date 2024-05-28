@@ -63,6 +63,10 @@ open class BaseFragment(
 
     interface BottomSheet {
 
+        fun isAllowParentTransform(): Boolean {
+            return true
+        }
+
         fun onEndShowingAnimation() {
 
         }
@@ -139,6 +143,7 @@ open class BaseFragment(
             }
         }
         view.setOnClickListener {  }
+        Log.d("Screen", javaClass.simpleName)
         return view
     }
 
@@ -181,6 +186,7 @@ open class BaseFragment(
         bottomSheetLayout.doOnHide = ::finishInternal
         bottomSheetLayout.doOnAnimationEnd = ::onEndShowingAnimation
         bottomSheetLayout.doOnDragging = ::onDragging
+        bottomSheetLayout.isAllowParentTransform = ::isAllowParentTransform
         bottomSheetLayout.fragment = this
         if (savedInstanceState == null && !disableShowAnimation) {
             bottomSheetLayout.startShowAnimation()

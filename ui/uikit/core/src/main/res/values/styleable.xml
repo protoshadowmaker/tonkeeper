@@ -110,5 +110,6 @@
 
     <declare-styleable name="SimpleRecyclerView">
         <attr name="android:maxHeight" format="dimension|reference"/>
+        <attr name="android:orientation" format="integer" />
     </declare-styleable>
 </resources>

@@ -17,8 +17,8 @@ android {
         applicationId = "com.tonapps.tonkeeperx"
         minSdk = 27 // Build.minSdkVersion
         targetSdk = 34
-        versionCode = 37
-        versionName = "0.0.36"
+        versionCode = 43
+        versionName = "0.0.43"
     }
 
     buildFeatures {
@@ -69,10 +69,12 @@ dependencies {
     implementation(project(Dependence.Wallet.Data.tonconnect))
     implementation(project(Dependence.Wallet.Data.push))
     implementation(project(Dependence.Wallet.Data.browser))
+    implementation(project(Dependence.Wallet.Data.swap))
 
     implementation(project(Dependence.UIKit.core))
 
     implementation(Dependence.AndroidX.core)
+    implementation(Dependence.AndroidX.shortcuts)
     implementation(Dependence.AndroidX.appCompat)
     implementation(Dependence.AndroidX.activity)
     implementation(Dependence.AndroidX.fragment)
@@ -96,6 +98,7 @@ dependencies {
 
     implementation(project(Dependence.Module.core))
     implementation(project(Dependence.Module.tonApi))
+    implementation(project(Dependence.Module.stonApi))
     implementation(project(Dependence.Module.blur))
 
     implementation(project(Dependence.Lib.network))
@@ -111,6 +114,8 @@ dependencies {
     implementation(Dependence.AndroidX.Camera.core)
     implementation(Dependence.AndroidX.Camera.lifecycle)
     implementation(Dependence.AndroidX.Camera.view)
+
+    implementation(Dependence.GooglePlay.review)
 
     implementation(Dependence.Squareup.okhttp)
     implementation(Dependence.Squareup.sse)

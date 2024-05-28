@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swapTokensRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <uikit.widget.ModalHeader
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:action="@drawable/ic_close_16"
+        android:text="@string/settings"
+        app:ignoreSystemOffset="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toTopOf="@id/saveButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <uikit.widget.ColumnLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/offsetMedium">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:text="@string/slippage"
+                android:textAppearance="@style/TextAppearance.Label1"
+                android:textColor="?attr/textPrimaryColor" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="12dp"
+                android:text="@string/slippage_description"
+                android:textAppearance="@style/TextAppearance.Body2"
+                android:textColor="?attr/textSecondaryColor" />
+
+            <uikit.widget.InputView
+                android:id="@+id/slippageInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:hint="@string/slippage_hint"
+                android:singleLine="true" />
+
+            <uikit.widget.RowLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/barHeight"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="@dimen/offsetMedium">
+
+                <uikit.widget.SelectableButton
+                    android:id="@+id/slippage1"
+                    style="@style/Widget.App.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/slippage_1"
+                    android:textAppearance="@style/TextAppearance.Body1" />
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="0dp" />
+
+                <uikit.widget.SelectableButton
+                    android:id="@+id/slippage3"
+                    style="@style/Widget.App.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/slippage_3"
+                    android:textAppearance="@style/TextAppearance.Body1" />
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="0dp" />
+
+                <uikit.widget.SelectableButton
+                    android:id="@+id/slippage5"
+                    style="@style/Widget.App.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/slippage_5"
+                    android:textAppearance="@style/TextAppearance.Body1" />
+            </uikit.widget.RowLayout>
+
+            <uikit.widget.RowLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/offsetMedium"
+                android:layout_marginBottom="@dimen/offsetMedium"
+                android:background="@drawable/bg_content"
+                android:padding="@dimen/offsetMedium">
+
+                <uikit.widget.ColumnLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/expert_mode"
+                        android:textAppearance="@style/TextAppearance.Label1"
+                        android:textColor="?attr/textPrimaryColor" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/expert_mode_description"
+                        android:textAppearance="@style/TextAppearance.Body2"
+                        android:textColor="?attr/textSecondaryColor" />
+
+                </uikit.widget.ColumnLayout>
+
+                <uikit.widget.SwitchView
+                    android:id="@+id/expertMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/offsetMedium" />
+
+            </uikit.widget.RowLayout>
+        </uikit.widget.ColumnLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/saveButton"
+        style="@style/Widget.App.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/offsetMedium"
+        android:layout_marginBottom="@dimen/offsetMedium"
+        android:text="@string/save"
+        android:textAppearance="@style/TextAppearance.Label1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

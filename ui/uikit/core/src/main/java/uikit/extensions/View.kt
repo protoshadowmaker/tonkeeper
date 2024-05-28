@@ -270,6 +270,17 @@ fun View.applyBottomInsets() {
     }
 }
 
+fun View.applyBottomNavigationInsets() {
+    val bottomPadding = this.paddingBottom
+    ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
+        val insetsNav = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+        view.setPadding(
+            view.paddingLeft, view.paddingTop, view.paddingRight, bottomPadding + insetsNav
+        )
+        insets
+    }
+}
+
 fun View.getViews(): List<View> {
     val result = mutableListOf<View>()
     if (this is ViewGroup) {
@@ -278,4 +289,40 @@ fun View.getViews(): List<View> {
         }
     }
     return result
+}
+
+fun TextView.setLeftDrawable(drawable: Drawable?) {
+    setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+}
+
+fun TextView.setRightDrawable(drawable: Drawable?) {
+    setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+}
+
+fun TextView.clearDrawables() {
+    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+}
+
+fun View.gone() {
+    visibility = View.GONE
+}
+
+fun View.isGone(): Boolean {
+    return visibility == View.GONE
+}
+
+fun View.visible() {
+    visibility = View.VISIBLE
+}
+
+fun View.isVisible(): Boolean {
+    return visibility == View.VISIBLE
+}
+
+fun View.invisible() {
+    visibility = View.INVISIBLE
+}
+
+fun View.isInvisible(): Boolean {
+    return visibility == View.INVISIBLE
 }

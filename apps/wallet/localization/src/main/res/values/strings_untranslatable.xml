@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="slippage_1" translatable="false">1 %</string>
+    <string name="slippage_3" translatable="false">3 %</string>
+    <string name="slippage_5" translatable="false">5 %</string>
+</resources>

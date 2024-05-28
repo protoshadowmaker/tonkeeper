@@ -27,4 +27,5 @@
 }
 
 -keep class io.tonapi.** { *; }
+-keep class fi.ston.** { *; }
 
