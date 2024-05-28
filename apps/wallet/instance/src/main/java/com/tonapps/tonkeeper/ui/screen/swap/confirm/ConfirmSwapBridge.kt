@@ -5,6 +5,7 @@ import org.json.JSONArray
 import uikit.widget.webview.bridge.JsBridge
 
 class ConfirmSwapBridge(
+    val stonApiKey: String,
     val sendTransaction: suspend (request: SignRequestEntity) -> String?,
     val sendTransactionCompleted: () -> Unit,
     val sendTransactionErrorCallback: (e: Throwable) -> Unit,
@@ -14,8 +15,7 @@ class ConfirmSwapBridge(
         arrayOf(FUNCTION_SEND_TRANSACTION, FUNCTION_SEND_TRANSACTION_ERROR)
 
     override fun jsInjection(): String {
-        //TODO mark to readme
-        return "window.apiKey = \"7af7a1b88b608b3a33b8088692e90b540ef18edbdb71c145c51b88ba4c38e2b9\";"
+        return "window.apiKey = \"$stonApiKey\";"
     }
 
     override suspend fun invokeFunction(name: String, args: JSONArray): Any? {

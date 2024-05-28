@@ -25,6 +25,8 @@ data class ConfigEntity(
     val flags: FlagsEntity,
     val faqUrl: String,
     val stonHost: String,
+    //TODO mark to readme
+    val stonApiKey: String
 ): Parcelable {
 
     val swapUri: Uri
@@ -51,7 +53,8 @@ data class ConfigEntity(
             FlagsEntity(json.getJSONObject("flags"))
         },
         faqUrl = json.getString("faq_url"),
-        stonHost = "https://api.ston.fi"
+        stonHost = "https://api.ston.fi",
+        stonApiKey = "7af7a1b88b608b3a33b8088692e90b540ef18edbdb71c145c51b88ba4c38e2b9"
     )
 
     constructor() : this(
@@ -71,7 +74,8 @@ data class ConfigEntity(
         featuredPlayInterval = 3000,
         flags = FlagsEntity(),
         faqUrl = "https://tonkeeper.helpscoutdocs.com/",
-        stonHost = "https://api.ston.fi"
+        stonHost = "https://api.ston.fi",
+        stonApiKey = "7af7a1b88b608b3a33b8088692e90b540ef18edbdb71c145c51b88ba4c38e2b9"
     )
 
     companion object {
